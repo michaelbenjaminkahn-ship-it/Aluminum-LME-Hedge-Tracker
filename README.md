@@ -22,30 +22,30 @@ The screens are identical in every mode; only *where the data lives* changes.
 
 Connect a back end any time via the **Connect shared book** button in the app.
 
-## What it shows
-
-- **Summary cards** — net position (long vs short), total long, total short,
-  unpriced/floating exposure, and an indicative mark-to-market.
-- **Net Position by Prompt Month** — long, short, net, priced vs unpriced, and
-  MTM grouped by prompt month. The at-a-glance view of where you're hedged and
-  where you're still exposed.
-- **Hedge Ledger** — every trade, sortable and filterable. Double-click a row
-  (or **Edit**) to change it.
-
 ## Adding & editing trades
 
-**+ Add hedge** opens a form: trade date, broker trade ID, venue (LME/OTC), side,
-product, tonnes, pricing (Average `ASP+differential`, or Fixed strike), prompt /
-settlement date, and **unpriced tonnes** (the lots not yet fixed — your live
-exposure). Priced = quantity − unpriced. The **differential** field captures
-`ASP+x` premiums; **fixed strike** drives the indicative MTM on fixed legs.
+**+ Add trade** opens a clean ticket with the fields up front: trade date, buy or
+sell, number of lots, price (USD/tonne), customer name, customer PO #, prompt
+date, and customer delivery month. When the trade settles, enter a **close
+price** and the app shows the realized **Trade P&L = (close − price) × lots**
+(flipped for a sell). LME/hedge specifics (venue, ASP differential, strike,
+unpriced lots, averaging dates) live in an optional **Hedge details** section.
+
+## What it shows
+
+- **Summary cards** — net open position (lots), open long, open short, **realized
+  P&L** (settled trades), and **open MTM** (unsettled trades marked vs the price
+  you type in the top box).
+- **Position by Customer Delivery Month** — long/short lots, net, settled P&L, and
+  open MTM per delivery month. Click a month to expand the trades inside it.
+- **Trade Ledger** — every trade, sortable and filterable (by side, by
+  open/settled, or search customer/PO). Double-click a row to edit.
 
 ## Valuation
 
-Type today's LME price in the top-right box and everything marks to market. The
-MTM is `(your price − strike) × tonnes`, signed by side — an **estimate** for
-fixed-price legs. Pure average (ASP) legs show no MTM until they price, because
-they settle at the market average. It is not a substitute for the broker statement.
+`Trade P&L = (close − price) × lots`, flipped for a sell (a sale profits when the
+price falls). Open trades show an indicative mark-to-market vs the current price
+you enter in the top box, until a close price settles them.
 
 ## Data in / out
 

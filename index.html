@@ -21,7 +21,6 @@
   .wrap{max-width:1180px;margin:0 auto;padding:22px 22px 60px}
   .hidden{display:none !important}
 
-  /* Header */
   header.app{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:18px}
   .brand h1{margin:0;font-size:19px;letter-spacing:.2px}
   .brand .sub{color:var(--muted);font-size:12.5px;margin-top:3px}
@@ -38,7 +37,6 @@
   .user-chip a:hover{text-decoration:underline}
   .asof{font-size:11px;color:var(--muted);text-align:right}
 
-  /* Cards */
   .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:13px 15px;box-shadow:var(--shadow)}
   .card .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
@@ -47,13 +45,11 @@
   .v.long{color:var(--long)} .v.short{color:var(--short)} .v.warn{color:var(--warn)}
   .v.pos{color:var(--long)} .v.neg{color:var(--short)}
 
-  /* Panels */
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
   .panel .head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 15px;border-bottom:1px solid var(--line)}
   .panel .head h2{margin:0;font-size:13.5px;letter-spacing:.3px}
   .panel .head .hint{font-size:11.5px;color:var(--muted)}
 
-  /* Toolbar */
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
   .toolbar .spacer{flex:1}
   button,.btn{font:inherit;font-size:12.5px;font-weight:550;cursor:pointer;border:1px solid var(--line);
@@ -64,12 +60,11 @@
   button.ghost{background:transparent}
   button.danger:hover{border-color:var(--short);color:var(--short)}
   button:disabled{opacity:.5;cursor:default}
-  select,input[type=text],input[type=date],input[type=number],input[type=email],input[type=password]{
+  select,input[type=text],input[type=date],input[type=month],input[type=number],input[type=email],input[type=password]{
     font:inherit;font-size:12.5px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);outline:none}
   select:focus,input:focus{border-color:var(--accent)}
   .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
-  /* Tables */
   table{width:100%;border-collapse:collapse}
   th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
   th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;cursor:pointer;user-select:none;background:#fbfcfd}
@@ -81,8 +76,8 @@
   .tag.buy{background:var(--long-soft);color:var(--long)}
   .tag.sell{background:var(--short-soft);color:var(--short)}
   .tag.venue{background:var(--accent-soft);color:var(--accent)}
-  .tag.open{background:var(--long-soft);color:var(--long)}
-  .tag.closed{background:#eef1f4;color:var(--muted)}
+  .tag.open{background:var(--warn-soft);color:var(--warn)}
+  .tag.closed{background:var(--long-soft);color:var(--long)}
   .row-actions{display:flex;gap:6px;opacity:0;transition:.1s}
   tr:hover .row-actions{opacity:1}
   .row-actions button{padding:3px 8px;font-size:11px}
@@ -98,27 +93,27 @@
   table.sub tr:last-child td{border-bottom:none}
   table.sub tr:hover{background:#eef4f9;cursor:pointer}
 
-  /* Modal */
   .overlay{position:fixed;inset:0;background:rgba(20,30,40,.45);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow:auto}
   .overlay.show{display:flex}
   .modal{background:var(--panel);border-radius:12px;width:100%;max-width:640px;box-shadow:0 18px 50px rgba(20,30,40,.3);overflow:hidden}
   .modal.narrow{max-width:430px}
   .modal .mhead{padding:15px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
   .modal .mhead h3{margin:0;font-size:15px}
-  .modal .mbody{padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:13px}
-  .modal .mbody.single{display:block}
-  .modal .mbody .full{grid-column:1 / -1}
+  .grid2{padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  .grid2 .full{grid-column:1 / -1}
+  .modal .single{padding:18px 20px}
   .field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
   .field input,.field select,.field textarea{width:100%}
   .field textarea{font:inherit;font-size:12.5px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;resize:vertical;min-height:46px}
   .field .help{font-size:10.5px;color:var(--muted);margin-top:3px}
-  .field+.field{margin-top:13px}
+  .adv-toggle{cursor:pointer;color:var(--accent);font-size:12.5px;font-weight:550;display:inline-block}
+  .adv-toggle:hover{text-decoration:underline}
+  .settle-box{grid-column:1 / -1;border-top:1px solid var(--line);padding-top:13px}
   .modal .mfoot{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
   .close-x{cursor:pointer;color:var(--muted);font-size:20px;line-height:1;border:none;background:none;padding:4px}
   textarea.import-area{width:100%;min-height:160px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;padding:10px;border:1px solid var(--line);border-radius:8px}
 
-  /* Auth screen */
-  #authScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:80;padding:20px}
+  #authScreen,#passScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:80;padding:20px}
   .auth-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);width:100%;max-width:380px;padding:28px 26px}
   .auth-card h1{font-size:18px;margin:0 0 4px}
   .auth-card .sub{color:var(--muted);font-size:12.5px;margin-bottom:20px}
@@ -132,7 +127,7 @@
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:99}
   .toast.show{opacity:1}
 
-  @media (max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.modal .mbody{grid-template-columns:1fr}}
+  @media (max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
   @media print{
     body{background:#fff;font-size:11px}.wrap{max-width:none;padding:0}
     .no-print,.toolbar,.row-actions,.price-box input,.user-chip{display:none !important}
@@ -144,41 +139,41 @@
 </head>
 <body>
 
-<!-- ============ LOGIN SCREEN (cloud mode only) ============ -->
+<!-- LOGIN (Supabase mode) -->
 <div id="authScreen" class="hidden">
   <div class="auth-card">
     <h1>Excel Metals — Hedge Tracker</h1>
     <div class="sub">Sign in to your shared book.</div>
-    <div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="username" placeholder="you@excelmetalsllc.com" /></div>
-    <div class="field"><label>Password</label><input id="authPass" type="password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+    <div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="username" /></div>
+    <div class="field"><label>Password</label><input id="authPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" /></div>
     <button class="primary" id="authBtn" onclick="doLogin()">Sign in</button>
     <div class="auth-err" id="authErr"></div>
-    <div class="auth-foot">Trouble signing in? Ask your admin, or <a onclick="openSetup()">reconnect the database</a>.</div>
+    <div class="auth-foot"><a onclick="openSetup()">reconnect the database</a></div>
   </div>
 </div>
 
-<!-- ============ PASSCODE SCREEN (Google Sheet mode) ============ -->
-<div id="passScreen" class="hidden" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:80;padding:20px">
+<!-- PASSCODE (Google Sheet mode) -->
+<div id="passScreen" class="hidden">
   <div class="auth-card">
     <h1>Excel Metals — Hedge Tracker</h1>
     <div class="sub">Enter the shared passcode to open the book.</div>
-    <div class="field"><label>Passcode</label><input id="passInput" type="password" autocomplete="off" placeholder="••••••••" onkeydown="if(event.key==='Enter')doPass()" /></div>
+    <div class="field"><label>Passcode</label><input id="passInput" type="password" autocomplete="off" onkeydown="if(event.key==='Enter')doPass()" /></div>
     <button class="primary" id="passBtn" onclick="doPass()">Open tracker</button>
     <div class="auth-err" id="passErr"></div>
     <div class="auth-foot"><a onclick="openSetup()">Set up / change the Google Sheet connection</a></div>
   </div>
 </div>
 
-<!-- ============ MAIN APP ============ -->
+<!-- MAIN APP -->
 <div class="wrap hidden" id="appWrap">
   <header class="app">
     <div class="brand">
       <h1>Excel Metals LLC — Aluminium Hedge Tracker</h1>
-      <div class="sub">Primary Aluminium · LME &amp; OTC hedges</div>
+      <div class="sub">Customer trades · realized P&amp;L on settlement</div>
     </div>
     <div class="hdr-right">
       <div class="price-box">
-        <div><label>Current LME price</label><input id="mktPrice" type="number" step="0.01" placeholder="3400.00" /></div>
+        <div><label>Current price</label><input id="mktPrice" type="number" step="0.01" placeholder="3400.00" /></div>
         <span class="unit">USD / tonne</span>
       </div>
       <div class="user-chip" id="userChip"></div>
@@ -190,20 +185,21 @@
 
   <section class="panel">
     <div class="head">
-      <h2>Net Position by Prompt Month</h2>
-      <span class="hint">Long − Short, with unpriced (floating) exposure</span>
+      <h2>Position by Customer Delivery Month</h2>
+      <span class="hint">Long − Short, settled P&amp;L, and open mark-to-market</span>
     </div>
     <table>
       <thead><tr>
-        <th>Prompt month</th><th class="num">Long (t)</th><th class="num">Short (t)</th>
-        <th class="num">Net (t)</th><th class="num">Priced (t)</th><th class="num">Unpriced (t)</th><th class="num" title="Mark-to-market: indicative value if closed at the price you entered">Indic. MTM</th>
+        <th>Delivery month</th><th class="num">Long (lots)</th><th class="num">Short (lots)</th>
+        <th class="num">Net (lots)</th><th class="num">Settled P&amp;L</th>
+        <th class="num" title="Open trades marked vs the current price you entered">Open MTM</th>
       </tr></thead>
       <tbody id="monthBody"></tbody>
     </table>
   </section>
 
   <div class="toolbar no-print">
-    <button class="primary" onclick="openEditor()">+ Add hedge</button>
+    <button class="primary" onclick="openEditor()">+ Add trade</button>
     <button onclick="openImport()">Import</button>
     <button onclick="exportJSON()">Export backup</button>
     <button onclick="exportCSV()">Export CSV</button>
@@ -212,15 +208,14 @@
     <button class="danger ghost" id="connectBtn" onclick="openSetup()">Connect shared book</button>
     <div class="spacer"></div>
     <div class="filters">
-      <input id="search" type="text" placeholder="Search trade id / product…" oninput="render()" style="width:200px" />
-      <select id="fVenue" onchange="render()"><option value="">All venues</option><option>LME</option><option>OTC</option></select>
+      <input id="search" type="text" placeholder="Search customer / PO / notes…" oninput="render()" style="width:210px" />
       <select id="fSide" onchange="render()"><option value="">Buy &amp; Sell</option><option value="Buy">Buy only</option><option value="Sell">Sell only</option></select>
-      <select id="fStatus" onchange="render()"><option value="Open">Open only</option><option value="">All statuses</option><option value="Closed">Closed only</option></select>
+      <select id="fStatus" onchange="render()"><option value="">Open &amp; Settled</option><option value="Open">Open only</option><option value="Settled">Settled only</option></select>
     </div>
   </div>
 
   <section class="panel">
-    <div class="head"><h2>Hedge Ledger</h2><span class="hint" id="ledgerCount"></span></div>
+    <div class="head"><h2>Trade Ledger</h2><span class="hint" id="ledgerCount"></span></div>
     <div style="overflow-x:auto">
       <table id="ledger"><thead><tr id="ledgerHead"></tr></thead><tbody id="ledgerBody"></tbody></table>
     </div>
@@ -232,30 +227,43 @@
 <!-- Editor modal -->
 <div class="overlay" id="editorOverlay">
   <div class="modal">
-    <div class="mhead"><h3 id="editorTitle">Add hedge</h3><button class="close-x" onclick="closeEditor()">&times;</button></div>
-    <div class="mbody">
+    <div class="mhead"><h3 id="editorTitle">Add trade</h3><button class="close-x" onclick="closeEditor()">&times;</button></div>
+    <div class="grid2">
       <div class="field"><label>Trade date</label><input id="f_tradeDate" type="date" /></div>
-      <div class="field"><label>Trade ID (broker ref)</label><input id="f_tradeId" type="text" placeholder="broker trade ref" /></div>
-      <div class="field"><label>Venue</label><select id="f_venue"><option>LME</option><option>OTC</option></select></div>
-      <div class="field"><label>Side</label><select id="f_side"><option value="Buy">Buy / Long</option><option value="Sell">Sell / Short</option></select></div>
-      <div class="field"><label>Product</label>
-        <input id="f_product" type="text" list="productList" placeholder="Avg Primary Aluminium" />
-        <datalist id="productList"><option>Avg Primary Aluminium</option><option>OTCM Primary Aluminium</option><option>OTC CAPS Primary Aluminium</option><option>Float v Float</option></datalist>
+      <div class="field"><label>Buy or sell</label><select id="f_side" onchange="updatePnlPreview()"><option value="Buy">Buy</option><option value="Sell">Sell</option></select></div>
+      <div class="field"><label>Number of lots</label><input id="f_lots" type="number" step="0.0001" placeholder="75" oninput="updatePnlPreview()" /></div>
+      <div class="field"><label>Price (USD / tonne)</label><input id="f_price" type="number" step="0.01" placeholder="2700.00" oninput="updatePnlPreview()" /></div>
+      <div class="field"><label>Customer name</label><input id="f_customer" type="text" placeholder="Customer Inc." /></div>
+      <div class="field"><label>Customer PO #</label><input id="f_po" type="text" placeholder="PO-12345" /></div>
+      <div class="field"><label>Prompt date</label><input id="f_prompt" type="date" /></div>
+      <div class="field"><label>Customer delivery month</label><input id="f_deliveryMonth" type="month" /></div>
+
+      <div class="field settle-box">
+        <label>Close price (USD / tonne) — enter when the trade settles</label>
+        <input id="f_closePrice" type="number" step="0.01" placeholder="leave blank until settled" oninput="updatePnlPreview()" />
+        <div class="help" id="pnlPreview">Trade P&amp;L appears here once a close price is entered.</div>
       </div>
-      <div class="field"><label>Quantity (tonnes)</label><input id="f_tonnes" type="number" step="0.0001" placeholder="125" /></div>
-      <div class="field"><label>Pricing</label><select id="f_pricing" onchange="syncPricingFields()"><option value="Average">Average (ASP / float)</option><option value="Fixed">Fixed price</option></select></div>
-      <div class="field"><label>Differential</label><input id="f_diff" type="number" step="0.01" placeholder="e.g. 7 for ASP+7, -46" /><div class="help">Premium over the average (ASP+x). Blank if flat.</div></div>
-      <div class="field" id="strikeField"><label>Fixed strike (USD/t)</label><input id="f_strike" type="number" step="0.01" placeholder="2727.00" /><div class="help">Used for indicative MTM on fixed legs.</div></div>
-      <div class="field"><label>Status</label><select id="f_status"><option>Open</option><option>Closed</option></select></div>
-      <div class="field"><label>Avg start</label><input id="f_avgStart" type="date" /></div>
-      <div class="field"><label>Avg end</label><input id="f_avgEnd" type="date" /></div>
-      <div class="field"><label>Prompt / settlement</label><input id="f_prompt" type="date" /></div>
-      <div class="field"><label>Unpriced (floating) tonnes</label><input id="f_unpriced" type="number" step="0.0001" placeholder="90.9091" /><div class="help">Lots not yet fixed. Priced = quantity − unpriced.</div></div>
-      <div class="field full"><label>Notes</label><textarea id="f_notes" placeholder="e.g. hedge vs physical cargo"></textarea></div>
+
+      <div class="field full"><a class="adv-toggle" id="advToggle" onclick="toggleAdv()">▸ Hedge details (optional)</a></div>
+      <div class="full" id="advBlock" style="display:none">
+        <div class="grid2" style="padding:0">
+          <div class="field"><label>Venue</label><select id="f_venue"><option value="">—</option><option>OTC</option><option>LME</option></select></div>
+          <div class="field"><label>Product</label><input id="f_product" type="text" list="productList" placeholder="Primary Aluminium" /></div>
+          <div class="field"><label>Pricing</label><select id="f_pricing"><option value="Fixed">Fixed price</option><option value="Average">Average (ASP)</option></select></div>
+          <div class="field"><label>Differential (ASP ±)</label><input id="f_diff" type="number" step="0.01" placeholder="e.g. 7 or -46" /></div>
+          <div class="field"><label>Strike (USD/t)</label><input id="f_strike" type="number" step="0.01" /></div>
+          <div class="field"><label>Unpriced (floating) lots</label><input id="f_unpriced" type="number" step="0.0001" placeholder="0" /></div>
+          <div class="field"><label>Avg start</label><input id="f_avgStart" type="date" /></div>
+          <div class="field"><label>Avg end</label><input id="f_avgEnd" type="date" /></div>
+        </div>
+        <datalist id="productList"><option>Primary Aluminium</option><option>Avg Primary Aluminium</option><option>OTCM Primary Aluminium</option><option>Float v Float</option></datalist>
+      </div>
+
+      <div class="field full"><label>Notes</label><textarea id="f_notes" placeholder="anything useful"></textarea></div>
     </div>
     <div class="mfoot">
       <button class="danger ghost" id="deleteBtn" onclick="deleteCurrent()" style="visibility:hidden">Delete</button>
-      <div style="display:flex;gap:8px"><button onclick="closeEditor()">Cancel</button><button class="primary" id="saveBtn" onclick="saveEditor()">Save hedge</button></div>
+      <div style="display:flex;gap:8px"><button onclick="closeEditor()">Cancel</button><button class="primary" id="saveBtn" onclick="saveEditor()">Save trade</button></div>
     </div>
   </div>
 </div>
@@ -264,9 +272,9 @@
 <div class="overlay" id="importOverlay">
   <div class="modal">
     <div class="mhead"><h3>Import trades</h3><button class="close-x" onclick="closeImport()">&times;</button></div>
-    <div class="mbody single">
+    <div class="single">
       <p class="muted" style="margin-top:0">Paste CSV rows, or a JSON backup. CSV header (any order):<br>
-        <code style="font-size:11px">tradeDate, tradeId, venue, side, product, tonnes, pricing, diff, strike, avgStart, avgEnd, prompt, unpriced, status, notes</code></p>
+        <code style="font-size:11px">tradeDate, side, lots, price, customer, po, prompt, deliveryMonth, closePrice, venue, product, pricing, diff, strike, unpriced, status, notes</code></p>
       <textarea id="importText" class="import-area" placeholder="Paste here…"></textarea>
       <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:12.5px"><input type="checkbox" id="importReplace" style="width:auto"> Replace everything (otherwise append)</label>
     </div>
@@ -276,13 +284,13 @@
   </div>
 </div>
 
-<!-- Setup / connect modal -->
+<!-- Setup / connect modal (Google Sheet) -->
 <div class="overlay" id="setupOverlay">
   <div class="modal narrow">
     <div class="mhead"><h3>Connect to your Google Sheet</h3><button class="close-x" onclick="closeSetup()">&times;</button></div>
-    <div class="mbody single">
+    <div class="single">
       <p class="muted" style="margin-top:0">Paste the Apps Script <b>web-app URL</b> (ends in <code>/exec</code>) and the shared <b>passcode</b> you set in the script.</p>
-      <div class="field"><label>Web app URL</label><input id="gs_url" type="text" placeholder="https://script.google.com/macros/s/…/exec" /></div>
+      <div class="field" style="margin-bottom:13px"><label>Web app URL</label><input id="gs_url" type="text" placeholder="https://script.google.com/macros/s/…/exec" /></div>
       <div class="field"><label>Passcode</label><input id="gs_pass" type="text" placeholder="your shared passcode" /></div>
       <p class="muted" style="font-size:11px;margin-bottom:0">Step-by-step in <b>GOOGLE_SHEETS_SETUP.md</b>.</p>
     </div>
@@ -296,37 +304,21 @@
 
 <script>
 /* ============================================================
-   CONFIG — when you have your Supabase project, paste the two
-   values here (or use the "Connect shared book" button in-app).
-   Leaving them blank runs the tracker locally in this browser.
+   CONFIG
    ============================================================ */
-const SUPABASE_URL  = "";   // e.g. "https://abcd.supabase.co"
-const SUPABASE_ANON_KEY = "";   // e.g. "eyJhbGciOi..."
-
-/* Google Sheet backend (recommended for this workflow): paste your Apps Script
-   web-app /exec URL here, or connect it in-app via "Connect shared book". */
-const GSHEET_URL = "";
+const SUPABASE_URL  = "";
+const SUPABASE_ANON_KEY = "";
+const GSHEET_URL = "";   // Apps Script web-app /exec URL (or use Connect in-app)
 
 /* ---------- state ---------- */
 let hedges = [];
-let mode = "local";      // "local" | "cloud"
-let sb = null;           // supabase client
-let me = null;           // logged-in user
-let sortKey = "prompt", sortDir = 1, editingId = null;
+let mode = "local";
+let sb = null, me = null;
+let sortKey = "tradeDate", sortDir = -1, editingId = null;
 const LKEY = "excel_metals_hedges_v1";
 
-function sbConfig(){
-  return {
-    url: SUPABASE_URL || localStorage.getItem("sb_url") || "",
-    key: SUPABASE_ANON_KEY || localStorage.getItem("sb_key") || "",
-  };
-}
-function gsConfig(){
-  return {
-    url: GSHEET_URL || localStorage.getItem("gs_url") || "",
-    pass: localStorage.getItem("gs_pass") || "",
-  };
-}
+function sbConfig(){ return { url: SUPABASE_URL || localStorage.getItem("sb_url") || "", key: SUPABASE_ANON_KEY || localStorage.getItem("sb_key") || "" }; }
+function gsConfig(){ return { url: GSHEET_URL || localStorage.getItem("gs_url") || "", pass: localStorage.getItem("gs_pass") || "" }; }
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
 /* ============================================================
@@ -334,9 +326,7 @@ function uid(){ return Date.now().toString(36) + Math.random().toString(36).slic
    ============================================================ */
 async function init(){
   const gs = gsConfig(), cfg = sbConfig();
-  // price persists per-browser in every mode
-  const p = localStorage.getItem(LKEY+"_price");
-  if(p) document.getElementById("mktPrice").value = p;
+  const p = localStorage.getItem(LKEY+"_price"); if(p) document.getElementById("mktPrice").value = p;
 
   if(gs.url){
     mode = "sheets";
@@ -344,100 +334,78 @@ async function init(){
     const r = await loadSheets();
     if(r.ok) enterApp();
     else if(/passcode/i.test(r.err||"")) showPass("That passcode didn't work — try again.");
-    else { toast("Couldn't reach the Sheet: "+(r.err||"")); showPass("Connection problem. Check the passcode or try again."); }
+    else { showPass("Connection problem. Check the passcode or try again."); }
     return;
   }
   if(cfg.url && cfg.key && window.supabase){
     mode = "cloud";
     sb = window.supabase.createClient(cfg.url, cfg.key);
-    sb.auth.onAuthStateChange((_e, session)=>{
-      if(session && session.user){ me = session.user; enterApp(); }
-      else { me = null; showAuth(); }
-    });
+    sb.auth.onAuthStateChange((_e, s)=>{ if(s&&s.user){ me=s.user; enterApp(); } else { me=null; showAuth(); } });
     const { data:{ session } } = await sb.auth.getSession();
-    if(session && session.user){ me = session.user; enterApp(); }
-    else showAuth();
+    if(session && session.user){ me = session.user; enterApp(); } else showAuth();
     return;
   }
-  mode = "local";
-  loadLocal();
-  enterApp();
+  mode = "local"; loadLocal(); enterApp();
 }
-
-function showAuth(){
-  document.getElementById("appWrap").classList.add("hidden");
-  document.getElementById("authScreen").classList.remove("hidden");
-}
+function showAuth(){ document.getElementById("appWrap").classList.add("hidden"); document.getElementById("passScreen").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
+function showPass(msg){ document.getElementById("appWrap").classList.add("hidden"); document.getElementById("authScreen").classList.add("hidden"); document.getElementById("passScreen").classList.remove("hidden"); document.getElementById("passErr").textContent = msg||""; }
 async function enterApp(){
   document.getElementById("authScreen").classList.add("hidden");
-  const ps = document.getElementById("passScreen"); if(ps) ps.classList.add("hidden");
+  document.getElementById("passScreen").classList.add("hidden");
   document.getElementById("appWrap").classList.remove("hidden");
   document.getElementById("connectBtn").style.display = (mode==="local") ? "" : "none";
   const chip = document.getElementById("userChip");
   if(mode==="sheets"){
     chip.innerHTML = `<span class="dot"></span> Shared via Google Sheet · <a onclick="refreshNow()">Refresh</a> · <a onclick="openSetup()">settings</a>`;
-    document.getElementById("footNote").innerHTML =
-      "Data lives in your Google Sheet. Entries here add rows to it; edits made in the Sheet appear here on refresh. Indicative MTM is an estimate vs the price you enter.";
-    render();          // loadSheets already populated hedges before enterApp()
-    startSheetsPolling();
+    document.getElementById("footNote").innerHTML = "Data lives in your Google Sheet. Entries here add rows to it; edits made in the Sheet appear here on refresh. Open MTM is an estimate vs the price you enter.";
+    render(); startSheetsPolling();
   } else if(mode==="cloud" && me){
     chip.innerHTML = `<span class="dot"></span> Shared book · ${me.email} · <a onclick="signOut()">Sign out</a>`;
-    document.getElementById("footNote").innerHTML =
-      "Shared live with your team. Indicative MTM is an estimate vs the price you enter — not a substitute for the broker statement.";
-    await loadCloud();
-    subscribeRealtime();
+    document.getElementById("footNote").innerHTML = "Shared live with your team. Open MTM is an estimate vs the price you enter.";
+    await loadCloud(); subscribeRealtime();
   } else {
     chip.innerHTML = `<span class="dot" style="background:var(--muted)"></span> Local (this browser only) · <a onclick="openSetup()">connect shared book</a>`;
-    document.getElementById("footNote").innerHTML =
-      "Data is stored in this browser only. Use <b>Export backup</b> regularly, or connect a shared book to sync with your team.";
+    document.getElementById("footNote").innerHTML = "Data is stored in this browser only. Use <b>Export backup</b> regularly, or connect a shared book to sync with your team.";
     render();
   }
 }
 
 /* ============================================================
-   AUTH
+   AUTH (Supabase) + PASSCODE (Sheets)
    ============================================================ */
 async function doLogin(){
-  const email = document.getElementById("authEmail").value.trim();
-  const pass = document.getElementById("authPass").value;
-  const err = document.getElementById("authErr");
-  err.textContent = "";
+  const email = document.getElementById("authEmail").value.trim(), pass = document.getElementById("authPass").value;
+  const err = document.getElementById("authErr"); err.textContent = "";
   if(!email || !pass){ err.textContent = "Enter your email and password."; return; }
   const btn = document.getElementById("authBtn"); btn.disabled = true; btn.textContent = "Signing in…";
-  try{
-    const { error } = await sb.auth.signInWithPassword({ email, password: pass });
-    if(error) err.textContent = error.message;
-  } finally { btn.disabled = false; btn.textContent = "Sign in"; }
+  try{ const { error } = await sb.auth.signInWithPassword({ email, password: pass }); if(error) err.textContent = error.message; }
+  finally{ btn.disabled = false; btn.textContent = "Sign in"; }
 }
 async function signOut(){ if(sb) await sb.auth.signOut(); }
-
-/* ---- Google Sheet passcode gate ---- */
-function showPass(msg){
-  document.getElementById("appWrap").classList.add("hidden");
-  document.getElementById("authScreen").classList.add("hidden");
-  document.getElementById("passScreen").classList.remove("hidden");
-  document.getElementById("passErr").textContent = msg || "";
-}
 async function doPass(){
   const pass = document.getElementById("passInput").value.trim();
   if(!pass){ document.getElementById("passErr").textContent = "Enter the passcode."; return; }
   localStorage.setItem("gs_pass", pass);
   const btn = document.getElementById("passBtn"); btn.disabled = true; btn.textContent = "Connecting…";
-  const r = await loadSheets();
-  btn.disabled = false; btn.textContent = "Open tracker";
+  const r = await loadSheets(); btn.disabled = false; btn.textContent = "Open tracker";
   if(r.ok) enterApp();
-  else if(/passcode/i.test(r.err||"")) { localStorage.removeItem("gs_pass"); document.getElementById("passErr").textContent = "Wrong passcode."; }
+  else if(/passcode/i.test(r.err||"")){ localStorage.removeItem("gs_pass"); document.getElementById("passErr").textContent = "Wrong passcode."; }
   else document.getElementById("passErr").textContent = "Couldn't reach the Sheet. "+(r.err||"");
 }
 
 /* ============================================================
-   GOOGLE SHEET DATA LAYER
+   DATA LAYER
    ============================================================ */
+function safeParse(s,d){ try{ return JSON.parse(s); }catch(e){ return d; } }
+function loadLocal(){ const raw = localStorage.getItem(LKEY); hedges = raw ? safeParse(raw, []) : []; }
+function saveLocal(){ localStorage.setItem(LKEY, JSON.stringify(hedges)); }
+
 function normalizeRow(r){
   const o = Object.assign({}, r);
-  ["diff","strike"].forEach(k=>{ if(o[k]==="" || o[k]===null || o[k]===undefined) o[k]=""; else o[k]=num(o[k]); });
-  ["tonnes","unpriced"].forEach(k=>{ o[k] = num(o[k]); });
-  ["tradeDate","avgStart","avgEnd","prompt"].forEach(k=>{ if(o[k]) o[k]=toISO(o[k])||o[k]; });
+  ["lots","unpriced"].forEach(k=>{ o[k] = num(o[k]); });
+  ["price","closePrice","diff","strike"].forEach(k=>{ if(o[k]===""||o[k]==null) o[k]=""; else o[k]=num(o[k]); });
+  ["tradeDate","prompt","avgStart","avgEnd"].forEach(k=>{ if(o[k]) o[k]=toISO(o[k])||o[k]; });
+  if(o.deliveryMonth) o.deliveryMonth = ymInput(o.deliveryMonth);
   return o;
 }
 async function loadSheets(){
@@ -453,9 +421,7 @@ async function loadSheets(){
 async function gsPost(action, payload){
   const { url, pass } = gsConfig();
   const res = await fetch(url, { method:"POST", body: JSON.stringify(Object.assign({ token:pass, action }, payload)) });
-  const j = await res.json();
-  if(j.error) throw new Error(j.error);
-  return j;
+  const j = await res.json(); if(j.error) throw new Error(j.error); return j;
 }
 async function refreshNow(){ const r = await loadSheets(); if(r.ok){ render(); toast("Refreshed from Sheet"); } else toast("Refresh failed: "+(r.err||"")); }
 let sheetsPoll = null, focusBound = false;
@@ -463,77 +429,45 @@ function startSheetsPolling(){
   if(!sheetsPoll) sheetsPoll = setInterval(async()=>{ const r = await loadSheets(); if(r.ok) render(); }, 30000);
   if(!focusBound){ focusBound = true; window.addEventListener("focus", async()=>{ const r = await loadSheets(); if(r.ok) render(); }); }
 }
-
-/* ============================================================
-   DATA LAYER
-   ============================================================ */
-function loadLocal(){
-  const raw = localStorage.getItem(LKEY);
-  hedges = raw ? safeParse(raw, []) : [];
-}
-function saveLocal(){ localStorage.setItem(LKEY, JSON.stringify(hedges)); }
-function safeParse(s, d){ try{ return JSON.parse(s); }catch(e){ return d; } }
-
 async function loadCloud(){
   const { data, error } = await sb.from("hedges").select("id,data").order("updated_at",{ascending:false});
   if(error){ toast("Load error: "+error.message); return; }
-  hedges = (data||[]).map(r => Object.assign({ id:r.id }, r.data));
-  render();
+  hedges = (data||[]).map(r => Object.assign({ id:r.id }, r.data)); render();
 }
 let rtChannel = null;
-function subscribeRealtime(){
-  if(rtChannel) return;
-  rtChannel = sb.channel("hedges-rt")
-    .on("postgres_changes", { event:"*", schema:"public", table:"hedges" }, ()=>loadCloud())
-    .subscribe();
-}
-
+function subscribeRealtime(){ if(rtChannel) return; rtChannel = sb.channel("hedges-rt").on("postgres_changes",{event:"*",schema:"public",table:"hedges"},()=>loadCloud()).subscribe(); }
 function stripId(o){ const c = Object.assign({}, o); delete c.id; return c; }
 
 async function persistAdd(fields){
-  if(mode==="sheets"){
-    const j = await gsPost("add", { row: fields });
-    hedges.push(Object.assign({ id:j.id }, fields));
-  } else if(mode==="cloud"){
-    const { data, error } = await sb.from("hedges").insert({ data:fields }).select("id,data").single();
-    if(error) throw error;
-    hedges.push(Object.assign({ id:data.id }, data.data));
-  } else {
-    fields.id = uid(); hedges.push(fields); saveLocal();
-  }
+  if(mode==="sheets"){ const j = await gsPost("add",{ row:fields }); hedges.push(Object.assign({ id:j.id }, fields)); }
+  else if(mode==="cloud"){ const { data, error } = await sb.from("hedges").insert({ data:fields }).select("id,data").single(); if(error) throw error; hedges.push(Object.assign({ id:data.id }, data.data)); }
+  else { fields.id = uid(); hedges.push(fields); saveLocal(); }
 }
 async function persistUpdate(id, fields){
-  if(mode==="sheets"){
-    await gsPost("update", { id, row: fields });
-  } else if(mode==="cloud"){
-    const { error } = await sb.from("hedges").update({ data:fields, updated_at:new Date().toISOString() }).eq("id", id);
-    if(error) throw error;
-  }
+  if(mode==="sheets"){ await gsPost("update",{ id, row:fields }); }
+  else if(mode==="cloud"){ const { error } = await sb.from("hedges").update({ data:fields, updated_at:new Date().toISOString() }).eq("id", id); if(error) throw error; }
   const h = hedges.find(x=>x.id===id);
   if(h){ Object.keys(h).forEach(k=>{ if(k!=="id") delete h[k]; }); Object.assign(h, fields); }
   if(mode==="local") saveLocal();
 }
 async function persistRemove(id){
-  if(mode==="sheets"){ await gsPost("delete", { id }); }
+  if(mode==="sheets"){ await gsPost("delete",{ id }); }
   else if(mode==="cloud"){ const { error } = await sb.from("hedges").delete().eq("id", id); if(error) throw error; }
-  hedges = hedges.filter(x=>x.id!==id);
-  if(mode==="local") saveLocal();
+  hedges = hedges.filter(x=>x.id!==id); if(mode==="local") saveLocal();
 }
 async function persistMany(recs){
-  if(mode==="sheets"){
-    await gsPost("addMany", { rows: recs.map(stripId) });
-    const r = await loadSheets(); if(!r.ok) throw new Error(r.err||"reload failed");
-  } else if(mode==="cloud"){
-    const rows = recs.map(r=>({ data: stripId(r) }));
-    const { error } = await sb.from("hedges").insert(rows); if(error) throw error;
-    await loadCloud();
-  } else {
-    recs.forEach(r=>{ if(!r.id) r.id = uid(); }); hedges = hedges.concat(recs); saveLocal();
-  }
+  if(mode==="sheets"){ await gsPost("addMany",{ rows: recs.map(stripId) }); const r = await loadSheets(); if(!r.ok) throw new Error(r.err||"reload failed"); }
+  else if(mode==="cloud"){ const rows = recs.map(r=>({ data: stripId(r) })); const { error } = await sb.from("hedges").insert(rows); if(error) throw error; await loadCloud(); }
+  else { recs.forEach(r=>{ if(!r.id) r.id = uid(); }); hedges = hedges.concat(recs); saveLocal(); }
+}
+async function clearAllInternal(){
+  if(mode==="sheets"){ await gsPost("clear",{}); hedges=[]; }
+  else if(mode==="cloud"){ const { error } = await sb.from("hedges").delete().neq("id","00000000-0000-0000-0000-000000000000"); if(error) throw error; hedges=[]; }
+  else { hedges=[]; saveLocal(); }
 }
 
 /* ============================================================
-   DATE / NUMBER HELPERS
+   HELPERS
    ============================================================ */
 const MON = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
 function parseDate(s){
@@ -545,15 +479,18 @@ function parseDate(s){
 }
 function toISO(s){ const d = parseDate(s); return d ? d.toISOString().slice(0,10) : ""; }
 function fmtDate(s){ const d = parseDate(s); return d ? d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}) : "—"; }
-function monthKey(s){ const d = parseDate(s); return d ? d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0") : "zzzz"; }
-function monthLabel(s){ const d = parseDate(s); return d ? d.toLocaleDateString("en-GB",{month:"short",year:"numeric"}) : "Undated"; }
+function ymInput(s){ if(!s) return ""; const m=(""+s).match(/^(\d{4})-(\d{1,2})/); if(m) return m[1]+"-"+String(+m[2]).padStart(2,"0"); const d=parseDate(s); return d? d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"):""; }
+function ymKey(s){ const v=ymInput(s); return v||"zzzz"; }
+function ymLabel(s){ const v=ymInput(s); if(!v) return "No delivery month"; const m=v.match(/^(\d{4})-(\d{2})$/); return new Date(+m[1],+m[2]-1,1).toLocaleDateString("en-GB",{month:"short",year:"numeric"}); }
 function num(v){ const n = parseFloat(v); return isNaN(n) ? 0 : n; }
 function fmtN(n,dp=2){ return (n<0?"-":"") + Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:dp,maximumFractionDigits:dp}); }
 function fmtT(n){ return fmtN(n, Math.abs(n%1)>0.0001 ? 2 : 0); }
 function fmtUSD(n){ return (n<0?"-$":"$") + Math.abs(n).toLocaleString("en-US",{maximumFractionDigits:0}); }
+function qty(h){ return num(h.lots); }
 function sideSign(h){ return h.side === "Buy" ? 1 : -1; }
-function priced(h){ return Math.max(0, num(h.tonnes) - num(h.unpriced)); }
-function mtm(h, price){ if(!price) return 0; const k = num(h.strike); if(!k) return 0; return (price - k) * num(h.tonnes) * sideSign(h); }
+function isSettled(h){ return h.closePrice!=="" && h.closePrice!=null && !isNaN(parseFloat(h.closePrice)); }
+function realized(h){ return isSettled(h) ? (num(h.closePrice)-num(h.price))*qty(h)*sideSign(h) : 0; }
+function openMTM(h, price){ return (!isSettled(h) && price && num(h.price)) ? (price-num(h.price))*qty(h)*sideSign(h) : 0; }
 
 /* ============================================================
    RENDER
@@ -561,108 +498,105 @@ function mtm(h, price){ if(!price) return 0; const k = num(h.strike); if(!k) ret
 function currentPrice(){ return num(document.getElementById("mktPrice").value); }
 function filtered(){
   const q = document.getElementById("search").value.toLowerCase();
-  const v = document.getElementById("fVenue").value;
   const s = document.getElementById("fSide").value;
   const st = document.getElementById("fStatus").value;
   return hedges.filter(h=>{
-    if(v && h.venue!==v) return false;
     if(s && h.side!==s) return false;
-    if(st && h.status!==st) return false;
-    if(q && !((h.tradeId||"")+" "+(h.product||"")+" "+(h.notes||"")).toLowerCase().includes(q)) return false;
+    if(st==="Open" && isSettled(h)) return false;
+    if(st==="Settled" && !isSettled(h)) return false;
+    if(q && !((h.customer||"")+" "+(h.po||"")+" "+(h.notes||"")+" "+(h.product||"")).toLowerCase().includes(q)) return false;
     return true;
   });
 }
 function render(){
   const price = currentPrice();
   renderCards(price); renderMonths(price); renderLedger(price);
-  document.getElementById("printDate").textContent =
-    "Current price: " + (price?fmtN(price):"—") + " USD/t · Printed " + new Date().toLocaleDateString("en-GB");
+  document.getElementById("printDate").textContent = "Current price: " + (price?fmtN(price):"—") + " USD/t · Printed " + new Date().toLocaleDateString("en-GB");
 }
 function renderCards(price){
-  const open = hedges.filter(h=>h.status==="Open");
-  let long=0, short=0, unpriced=0, mtmTot=0;
-  open.forEach(h=>{ const t=num(h.tonnes); if(h.side==="Buy") long+=t; else short+=t; unpriced+=num(h.unpriced); mtmTot+=mtm(h,price); });
+  let long=0, short=0, realizedSum=0, openMtmSum=0;
+  hedges.forEach(h=>{
+    if(isSettled(h)){ realizedSum += realized(h); }
+    else { const k=qty(h); if(h.side==="Buy") long+=k; else short+=k; openMtmSum += openMTM(h, price); }
+  });
   const net = long - short;
   const cards = [
-    {k:"Net position", v:fmtT(Math.abs(net))+" t", cls: net>0?"long":net<0?"short":"", x: net>0?"net long":net<0?"net short":"flat"},
-    {k:"Total long", v:fmtT(long)+" t", cls:"long", x:"bought / long legs"},
-    {k:"Total short", v:fmtT(short)+" t", cls:"short", x:"sold / short legs"},
-    {k:"Unpriced exposure", v:fmtT(unpriced)+" t", cls:"warn", x:"floating, not yet fixed"},
-    {k:"Indicative MTM", v: price? fmtUSD(mtmTot) : "—", cls: mtmTot>0?"pos":mtmTot<0?"neg":"", x: price? "vs "+fmtN(price)+" /t" : "enter a price"},
+    {k:"Net open position", v:fmtT(Math.abs(net))+" lots", cls: net>0?"long":net<0?"short":"", x: net>0?"net long":net<0?"net short":"flat"},
+    {k:"Open long", v:fmtT(long)+" lots", cls:"long", x:"to buy / long"},
+    {k:"Open short", v:fmtT(short)+" lots", cls:"short", x:"to sell / short"},
+    {k:"Realized P&L", v: fmtUSD(realizedSum), cls: realizedSum>0?"pos":realizedSum<0?"neg":"", x:"settled trades"},
+    {k:"Open MTM", v: price? fmtUSD(openMtmSum) : "—", cls: openMtmSum>0?"pos":openMtmSum<0?"neg":"", x: price? "vs "+fmtN(price)+" /t" : "enter a price"},
   ];
   document.getElementById("cards").innerHTML = cards.map(c=>`<div class="card"><div class="k">${c.k}</div><div class="v ${c.cls}">${c.v}</div><div class="x">${c.x}</div></div>`).join("");
 }
 let expandedMonths = new Set();
 function toggleMonth(key){ if(expandedMonths.has(key)) expandedMonths.delete(key); else expandedMonths.add(key); render(); }
 function renderMonths(price){
-  const open = hedges.filter(h=>h.status==="Open");
   const groups = {};
-  open.forEach(h=>{
-    const key = monthKey(h.prompt);
-    (groups[key] = groups[key] || {key, label:monthLabel(h.prompt), long:0, short:0, priced:0, unpriced:0, mtm:0, items:[]});
-    const g = groups[key], t = num(h.tonnes);
-    if(h.side==="Buy") g.long+=t; else g.short+=t;
-    g.priced+=priced(h); g.unpriced+=num(h.unpriced); g.mtm+=mtm(h,price); g.items.push(h);
+  hedges.forEach(h=>{
+    const key = ymKey(h.deliveryMonth);
+    (groups[key] = groups[key] || {key, label:ymLabel(h.deliveryMonth), long:0, short:0, realized:0, mtm:0, items:[]});
+    const g = groups[key], k = qty(h);
+    if(isSettled(h)){ g.realized += realized(h); }
+    else { if(h.side==="Buy") g.long+=k; else g.short+=k; g.mtm += openMTM(h, price); }
+    g.items.push(h);
   });
   const rows = Object.values(groups).sort((a,b)=>a.key<b.key?-1:1);
   const body = document.getElementById("monthBody");
-  if(!rows.length){ body.innerHTML = `<tr><td colspan="7" class="empty">No open positions yet.</td></tr>`; return; }
-  let tL=0,tS=0,tP=0,tU=0,tM=0, html="";
+  if(!rows.length){ body.innerHTML = `<tr><td colspan="6" class="empty">No trades yet.</td></tr>`; return; }
+  let tL=0,tS=0,tR=0,tM=0, html="";
   rows.forEach(g=>{
-    const net=g.long-g.short; tL+=g.long;tS+=g.short;tP+=g.priced;tU+=g.unpriced;tM+=g.mtm;
+    const net=g.long-g.short; tL+=g.long;tS+=g.short;tR+=g.realized;tM+=g.mtm;
     const exp = expandedMonths.has(g.key);
     html += `<tr class="month-row" onclick="toggleMonth('${g.key}')">
       <td><span class="caret">${exp?'▾':'▸'}</span> <b>${g.label}</b> <span class="muted" style="font-weight:400">· ${g.items.length} trade${g.items.length>1?'s':''}</span></td>
       <td class="num long">${fmtT(g.long)}</td><td class="num short">${fmtT(g.short)}</td>
       <td class="num"><b class="${net>0?'pl-pos':net<0?'pl-neg':''}">${net>0?'+':''}${fmtT(net)}</b></td>
-      <td class="num muted">${fmtT(g.priced)}</td>
-      <td class="num" style="color:var(--warn)">${fmtT(g.unpriced)}</td>
+      <td class="num">${g.realized?`<span class="${g.realized>0?'pl-pos':'pl-neg'}">${fmtUSD(g.realized)}</span>`:'<span class="muted">—</span>'}</td>
       <td class="num">${price?`<span class="${g.mtm>0?'pl-pos':g.mtm<0?'pl-neg':''}">${fmtUSD(g.mtm)}</span>`:'—'}</td></tr>`;
     if(exp){
       const items = g.items.slice().sort((a,b)=> a.side===b.side ? 0 : (a.side==="Buy"?-1:1));
-      html += `<tr class="month-detail"><td colspan="7" style="padding:0;background:#fafcfd"><table class="sub"><tbody>` +
-        items.map(h=>{ const m=mtm(h,price); return `<tr ondblclick="openEditor('${h.id}')">
-          <td style="padding-left:30px"><b>${h.tradeId||'—'}</b> <span class="tag venue">${h.venue||''}</span></td>
-          <td><span class="tag ${h.side==='Buy'?'buy':'sell'}">${h.side==='Buy'?'BUY':'SELL'}</span></td>
-          <td>${h.product||''}</td>
-          <td class="num">${fmtT(num(h.tonnes))} t</td>
-          <td class="num">${priceBasis(h)}</td>
-          <td class="num">${num(h.unpriced)?`<span style="color:var(--warn)">${fmtT(num(h.unpriced))} t unpriced</span>`:`<span class="muted">fully priced</span>`}</td>
-          <td class="num">${price&&num(h.strike)?`<span class="${m>0?'pl-pos':m<0?'pl-neg':''}">${fmtUSD(m)}</span>`:`<span class="muted">—</span>`}</td>
-        </tr>`; }).join("") +
-        `</tbody></table></td></tr>`;
+      html += `<tr class="month-detail"><td colspan="6" style="padding:0;background:#fafcfd"><table class="sub"><tbody>` +
+        items.map(h=>{ const settled=isSettled(h), pl = settled?realized(h):openMTM(h,price);
+          return `<tr ondblclick="openEditor('${h.id}')">
+          <td style="padding-left:30px"><span class="tag ${h.side==='Buy'?'buy':'sell'}">${h.side==='Buy'?'BUY':'SELL'}</span> <b>${fmtT(qty(h))}</b> lots</td>
+          <td>${h.customer||'—'}${h.po?` <span class="muted">· ${h.po}</span>`:''}</td>
+          <td class="num">@ ${num(h.price)?fmtN(num(h.price)):'—'}</td>
+          <td class="num">${settled?`close ${fmtN(num(h.closePrice))}`:`<span class="muted">open</span>`}</td>
+          <td class="num">${(settled||(price&&num(h.price)))?`<span class="${pl>0?'pl-pos':pl<0?'pl-neg':''}">${fmtUSD(pl)}</span>${settled?'':' <span class="muted">mtm</span>'}`:'<span class="muted">—</span>'}</td>
+          <td class="num muted">prompt ${fmtDate(h.prompt)}</td>
+        </tr>`; }).join("") + `</tbody></table></td></tr>`;
     }
   });
   html += `<tr style="border-top:2px solid var(--line)"><td><b>Total</b></td>
       <td class="num long"><b>${fmtT(tL)}</b></td><td class="num short"><b>${fmtT(tS)}</b></td>
       <td class="num"><b>${(tL-tS)>0?'+':''}${fmtT(tL-tS)}</b></td>
-      <td class="num muted"><b>${fmtT(tP)}</b></td><td class="num" style="color:var(--warn)"><b>${fmtT(tU)}</b></td>
+      <td class="num"><b class="${tR>0?'pl-pos':tR<0?'pl-neg':''}">${tR?fmtUSD(tR):'—'}</b></td>
       <td class="num">${price?`<b class="${tM>0?'pl-pos':tM<0?'pl-neg':''}">${fmtUSD(tM)}</b>`:'—'}</td></tr>`;
   body.innerHTML = html;
 }
 const COLS = [
   {k:"tradeDate", t:"Trade date", fmt:h=>fmtDate(h.tradeDate)},
-  {k:"tradeId", t:"Trade ID", fmt:h=>`<b>${h.tradeId||"—"}</b>`},
-  {k:"venue", t:"Venue", fmt:h=>`<span class="tag venue">${h.venue||""}</span>`},
   {k:"side", t:"Side", fmt:h=>`<span class="tag ${h.side==='Buy'?'buy':'sell'}">${h.side==='Buy'?'BUY':'SELL'}</span>`},
-  {k:"product", t:"Product", fmt:h=>h.product||"—"},
-  {k:"tonnes", t:"Tonnes", num:true, fmt:h=>fmtT(num(h.tonnes))},
-  {k:"price", t:"Price / basis", fmt:h=>priceBasis(h)},
-  {k:"unpriced", t:"Unpriced", num:true, fmt:h=>num(h.unpriced)?`<span style="color:var(--warn)">${fmtT(num(h.unpriced))}</span>`:`<span class="muted">0</span>`},
+  {k:"customer", t:"Customer", fmt:h=>h.customer||"—"},
+  {k:"po", t:"PO #", fmt:h=>h.po||"—"},
+  {k:"lots", t:"Lots", num:true, fmt:h=>fmtT(qty(h))},
+  {k:"price", t:"Price", num:true, fmt:h=>num(h.price)?fmtN(num(h.price)):'<span class="muted">—</span>'},
+  {k:"closePrice", t:"Close", num:true, fmt:h=>isSettled(h)?fmtN(num(h.closePrice)):'<span class="muted">—</span>'},
+  {k:"pnl", t:"P&L", num:true, fmt:h=>{
+      if(isSettled(h)){ const p=realized(h); return `<span class="${p>0?'pl-pos':p<0?'pl-neg':''}">${fmtUSD(p)}</span>`; }
+      const m=openMTM(h,currentPrice()); return (currentPrice()&&num(h.price))?`<span class="muted" title="open — mark vs current price">${fmtUSD(m)}</span>`:'<span class="muted">—</span>'; }},
+  {k:"deliveryMonth", t:"Delivery", fmt:h=>ymLabel(h.deliveryMonth)},
   {k:"prompt", t:"Prompt", fmt:h=>fmtDate(h.prompt)},
-  {k:"mtm", t:"Indic. MTM", num:true, fmt:h=>{const m=mtm(h,currentPrice());return currentPrice()&&num(h.strike)?`<span class="${m>0?'pl-pos':m<0?'pl-neg':''}">${fmtUSD(m)}</span>`:`<span class="muted">—</span>`}},
-  {k:"status", t:"Status", fmt:h=>`<span class="tag ${h.status==='Open'?'open':'closed'}">${h.status||'Open'}</span>`},
+  {k:"status", t:"Status", fmt:h=>{ const s=isSettled(h)?"Settled":"Open"; return `<span class="tag ${s==='Open'?'open':'closed'}">${s}</span>`; }},
 ];
-function priceBasis(h){
-  if(h.pricing==="Fixed") return num(h.strike)? fmtN(num(h.strike)) : "Fixed";
-  const d = h.diff; if(d===""||d===null||d===undefined) return "ASP";
-  const n = num(d); return "ASP" + (n>=0? "+"+fmtN(n,n%1?2:0) : fmtN(n,n%1?2:0));
-}
 function sortVal(h,k){
   if(k==="tradeDate"||k==="prompt"){ const d=parseDate(h[k]); return d?d.getTime():0; }
-  if(k==="tonnes"||k==="unpriced") return num(h[k]);
-  if(k==="mtm") return mtm(h,currentPrice());
-  if(k==="price") return num(h.strike)||num(h.diff)||0;
+  if(k==="deliveryMonth") return ymKey(h.deliveryMonth);
+  if(k==="lots") return qty(h);
+  if(k==="price"||k==="closePrice") return num(h[k]);
+  if(k==="pnl") return isSettled(h)?realized(h):openMTM(h,currentPrice());
+  if(k==="status") return isSettled(h)?1:0;
   return (""+(h[k]||"")).toLowerCase();
 }
 function renderLedger(price){
@@ -672,11 +606,11 @@ function renderLedger(price){
   }).join("") + `<th class="no-print"></th>`;
   const rows = filtered().sort((a,b)=>{ const x=sortVal(a,sortKey), y=sortVal(b,sortKey); return (x<y?-1:x>y?1:0)*sortDir; });
   const body = document.getElementById("ledgerBody");
-  if(!rows.length){ body.innerHTML = `<tr><td colspan="${COLS.length+1}" class="empty">No hedges yet. Click <b>+ Add hedge</b>, <b>Import</b>, or <b>Sample data</b> to explore.</td></tr>`; }
+  if(!rows.length){ body.innerHTML = `<tr><td colspan="${COLS.length+1}" class="empty">No trades yet. Click <b>+ Add trade</b>, <b>Import</b>, or <b>Sample data</b>.</td></tr>`; }
   else body.innerHTML = rows.map(h=>`<tr ondblclick="openEditor('${h.id}')">
       ${COLS.map(c=>`<td class="${c.num?'num':''}">${c.fmt(h)}</td>`).join("")}
       <td class="no-print"><div class="row-actions"><button onclick="openEditor('${h.id}')">Edit</button></div></td></tr>`).join("");
-  document.getElementById("ledgerCount").textContent = rows.length + " of " + hedges.length + " hedges";
+  document.getElementById("ledgerCount").textContent = rows.length + " of " + hedges.length + " trades";
 }
 function setSort(k){ if(sortKey===k) sortDir=-sortDir; else {sortKey=k;sortDir=1;} render(); }
 
@@ -686,59 +620,79 @@ function setSort(k){ if(sortKey===k) sortDir=-sortDir; else {sortKey=k;sortDir=1
 function openEditor(id){
   editingId = id || null;
   const h = id ? hedges.find(x=>x.id===id) : null;
-  document.getElementById("editorTitle").textContent = h ? "Edit hedge" : "Add hedge";
+  document.getElementById("editorTitle").textContent = h ? "Edit trade" : "Add trade";
   document.getElementById("deleteBtn").style.visibility = h ? "visible" : "hidden";
   const g = (k,d="")=> h ? (h[k]??d) : d;
   document.getElementById("f_tradeDate").value = h?toISO(h.tradeDate):new Date().toISOString().slice(0,10);
-  document.getElementById("f_tradeId").value = g("tradeId");
-  document.getElementById("f_venue").value = g("venue","LME");
-  document.getElementById("f_side").value = g("side","Buy");
+  document.getElementById("f_side").value = g("side","Sell");
+  document.getElementById("f_lots").value = g("lots");
+  document.getElementById("f_price").value = g("price");
+  document.getElementById("f_customer").value = g("customer");
+  document.getElementById("f_po").value = g("po");
+  document.getElementById("f_prompt").value = h?toISO(h.prompt):"";
+  document.getElementById("f_deliveryMonth").value = h?ymInput(h.deliveryMonth):"";
+  document.getElementById("f_closePrice").value = g("closePrice");
+  document.getElementById("f_venue").value = g("venue","");
   document.getElementById("f_product").value = g("product");
-  document.getElementById("f_tonnes").value = g("tonnes");
-  document.getElementById("f_pricing").value = g("pricing","Average");
+  document.getElementById("f_pricing").value = g("pricing","Fixed");
   document.getElementById("f_diff").value = g("diff");
   document.getElementById("f_strike").value = g("strike");
-  document.getElementById("f_status").value = g("status","Open");
+  document.getElementById("f_unpriced").value = g("unpriced");
   document.getElementById("f_avgStart").value = h?toISO(h.avgStart):"";
   document.getElementById("f_avgEnd").value = h?toISO(h.avgEnd):"";
-  document.getElementById("f_prompt").value = h?toISO(h.prompt):"";
-  document.getElementById("f_unpriced").value = g("unpriced",0);
   document.getElementById("f_notes").value = g("notes");
-  syncPricingFields();
+  const hasAdv = h && (h.venue||h.product||h.diff!==""&&h.diff!=null||h.strike!==""&&h.strike!=null||num(h.unpriced)||h.avgStart||h.avgEnd);
+  setAdv(!!hasAdv);
+  updatePnlPreview();
   document.getElementById("editorOverlay").classList.add("show");
 }
 function closeEditor(){ document.getElementById("editorOverlay").classList.remove("show"); editingId=null; }
-function syncPricingFields(){ document.getElementById("strikeField").style.opacity = document.getElementById("f_pricing").value==="Fixed"?1:.5; }
+function setAdv(show){ document.getElementById("advBlock").style.display = show?"block":"none"; document.getElementById("advToggle").textContent = (show?"▾":"▸")+" Hedge details (optional)"; }
+function toggleAdv(){ setAdv(document.getElementById("advBlock").style.display==="none"); }
+function updatePnlPreview(){
+  const cp = document.getElementById("f_closePrice").value;
+  const el = document.getElementById("pnlPreview");
+  if(cp===""){ el.textContent = "Trade P&L appears here once a close price is entered."; el.style.color="var(--muted)"; return; }
+  const lots=num(document.getElementById("f_lots").value), price=num(document.getElementById("f_price").value);
+  const sign = document.getElementById("f_side").value==="Buy"?1:-1;
+  const diff = num(cp)-price, pnl = diff*lots*sign;
+  el.textContent = "Trade P&L: "+fmtUSD(pnl)+"   ("+(diff>=0?"+":"")+fmtN(diff)+" /t × "+fmtT(lots)+" lots"+(sign<0?", short":"")+")";
+  el.style.color = pnl>0?"var(--long)":pnl<0?"var(--short)":"var(--muted)";
+}
 async function saveEditor(){
   const rec = {
     tradeDate: document.getElementById("f_tradeDate").value,
-    tradeId: document.getElementById("f_tradeId").value.trim(),
-    venue: document.getElementById("f_venue").value,
     side: document.getElementById("f_side").value,
+    lots: num(document.getElementById("f_lots").value),
+    price: document.getElementById("f_price").value===""?"":num(document.getElementById("f_price").value),
+    customer: document.getElementById("f_customer").value.trim(),
+    po: document.getElementById("f_po").value.trim(),
+    prompt: document.getElementById("f_prompt").value,
+    deliveryMonth: document.getElementById("f_deliveryMonth").value,
+    closePrice: document.getElementById("f_closePrice").value===""?"":num(document.getElementById("f_closePrice").value),
+    venue: document.getElementById("f_venue").value,
     product: document.getElementById("f_product").value.trim(),
-    tonnes: num(document.getElementById("f_tonnes").value),
     pricing: document.getElementById("f_pricing").value,
     diff: document.getElementById("f_diff").value===""?"":num(document.getElementById("f_diff").value),
     strike: document.getElementById("f_strike").value===""?"":num(document.getElementById("f_strike").value),
-    status: document.getElementById("f_status").value,
+    unpriced: num(document.getElementById("f_unpriced").value),
     avgStart: document.getElementById("f_avgStart").value,
     avgEnd: document.getElementById("f_avgEnd").value,
-    prompt: document.getElementById("f_prompt").value,
-    unpriced: num(document.getElementById("f_unpriced").value),
     notes: document.getElementById("f_notes").value.trim(),
   };
-  if(!rec.tonnes){ toast("Enter a quantity in tonnes."); return; }
+  if(!rec.lots){ toast("Enter the number of lots."); return; }
+  rec.status = (rec.closePrice!=="" && !isNaN(parseFloat(rec.closePrice))) ? "Settled" : "Open";
   const btn = document.getElementById("saveBtn"); btn.disabled = true;
   try{
     if(editingId) await persistUpdate(editingId, rec); else await persistAdd(rec);
-    render(); closeEditor(); toast(editingId?"Hedge updated":"Hedge added");
+    render(); closeEditor(); toast(editingId?"Trade updated":"Trade added");
   }catch(e){ toast("Save failed: "+(e.message||e)); }
   finally{ btn.disabled = false; }
 }
 async function deleteCurrent(){
   if(!editingId) return;
-  if(!confirm("Delete this hedge? This cannot be undone.")) return;
-  try{ await persistRemove(editingId); render(); closeEditor(); toast("Hedge deleted"); }
+  if(!confirm("Delete this trade? This cannot be undone.")) return;
+  try{ await persistRemove(editingId); render(); closeEditor(); toast("Trade deleted"); }
   catch(e){ toast("Delete failed: "+(e.message||e)); }
 }
 
@@ -749,73 +703,64 @@ function openImport(){ document.getElementById("importText").value=""; document.
 function closeImport(){ document.getElementById("importOverlay").classList.remove("show"); }
 function parseCSV(text){
   const lines = text.trim().split(/\r?\n/).filter(l=>l.trim()); if(!lines.length) return [];
-  const split = l => { const out=[]; let cur="",q=false;
-    for(const ch of l){ if(ch==='"'){q=!q;} else if(ch===','&&!q){out.push(cur);cur="";} else cur+=ch; } out.push(cur); return out.map(s=>s.trim()); };
-  const header = split(lines[0]).map(h=>h.toLowerCase().replace(/[^a-z]/g,"")); const idx = name => header.indexOf(name);
+  const split = l => { const out=[]; let cur="",q=false; for(const ch of l){ if(ch==='"'){q=!q;} else if(ch===','&&!q){out.push(cur);cur="";} else cur+=ch; } out.push(cur); return out.map(s=>s.trim()); };
+  const header = split(lines[0]).map(h=>h.toLowerCase().replace(/[^a-z]/g,"")); const idx = n => header.indexOf(n);
   const recs=[];
   for(let i=1;i<lines.length;i++){
     const c = split(lines[i]); const get=n=>{const k=idx(n);return k>=0?c[k]:"";}; if(!c.join("")) continue;
-    recs.push({
-      tradeDate:toISO(get("tradedate"))||get("tradedate"), tradeId:get("tradeid"),
-      venue:(get("venue")||"LME").toUpperCase().includes("OTC")?"OTC":"LME",
-      side:/sell|short/i.test(get("side"))?"Sell":"Buy", product:get("product"),
-      tonnes:num(get("tonnes")||get("quantity")||get("lots")),
-      pricing:/fix/i.test(get("pricing"))?"Fixed":"Average",
+    const rec = {
+      tradeDate:toISO(get("tradedate"))||get("tradedate"),
+      side:/sell|short/i.test(get("side"))?"Sell":"Buy",
+      lots:num(get("lots")||get("tonnes")||get("quantity")),
+      price:get("price")===""?"":num(get("price")),
+      customer:get("customer")||get("customername"),
+      po:get("po")||get("customerpo")||get("ponumber"),
+      prompt:toISO(get("prompt"))||get("prompt"),
+      deliveryMonth:ymInput(get("deliverymonth")||get("customerdeliverymonth")),
+      closePrice:get("closeprice")===""?(get("close")===""?"":num(get("close"))):num(get("closeprice")),
+      venue:get("venue"), product:get("product"), pricing:/aver/i.test(get("pricing"))?"Average":"Fixed",
       diff:get("diff")===""?"":num(get("diff")), strike:get("strike")===""?"":num(get("strike")),
-      avgStart:toISO(get("avgstart")), avgEnd:toISO(get("avgend")), prompt:toISO(get("prompt"))||get("prompt"),
-      unpriced:num(get("unpriced")), status:/clos/i.test(get("status"))?"Closed":"Open", notes:get("notes"),
-    });
+      unpriced:num(get("unpriced")), avgStart:toISO(get("avgstart")), avgEnd:toISO(get("avgend")),
+      notes:get("notes"),
+    };
+    rec.status = (rec.closePrice!=="" && !isNaN(parseFloat(rec.closePrice)))?"Settled":"Open";
+    recs.push(rec);
   }
   return recs;
 }
 async function runImport(){
-  const text = document.getElementById("importText").value.trim();
-  if(!text){ toast("Nothing to import."); return; }
+  const text = document.getElementById("importText").value.trim(); if(!text){ toast("Nothing to import."); return; }
   let recs=[];
-  try{
-    if(text[0]==="["||text[0]==="{"){ const j=JSON.parse(text); recs=(Array.isArray(j)?j:[j]).map(stripId); }
-    else recs = parseCSV(text);
-  }catch(e){ toast("Could not parse: "+e.message); return; }
+  try{ if(text[0]==="["||text[0]==="{"){ const j=JSON.parse(text); recs=(Array.isArray(j)?j:[j]).map(stripId); } else recs = parseCSV(text); }
+  catch(e){ toast("Could not parse: "+e.message); return; }
   if(!recs.length){ toast("No rows found."); return; }
   try{
-    if(document.getElementById("importReplace").checked){
-      if(!confirm("Replace ALL current hedges with the imported rows?")) return;
-      await clearAllInternal();
-    }
-    await persistMany(recs); render(); closeImport(); toast("Imported "+recs.length+" hedge(s)");
+    if(document.getElementById("importReplace").checked){ if(!confirm("Replace ALL current trades with the imported rows?")) return; await clearAllInternal(); }
+    await persistMany(recs); render(); closeImport(); toast("Imported "+recs.length+" trade(s)");
   }catch(e){ toast("Import failed: "+(e.message||e)); }
 }
-function download(name, text, type){
-  const b = new Blob([text],{type}); const u = URL.createObjectURL(b);
-  const a = document.createElement("a"); a.href=u; a.download=name; a.click(); URL.revokeObjectURL(u);
-}
+function download(name, text, type){ const b=new Blob([text],{type}); const u=URL.createObjectURL(b); const a=document.createElement("a"); a.href=u; a.download=name; a.click(); URL.revokeObjectURL(u); }
 function exportJSON(){ download("hedge-backup-"+new Date().toISOString().slice(0,10)+".json", JSON.stringify(hedges.map(stripId),null,2), "application/json"); toast("Backup downloaded"); }
+const CSV_COLS = ["tradeDate","side","lots","price","customer","po","prompt","deliveryMonth","closePrice","venue","product","pricing","diff","strike","unpriced","status","notes"];
 function exportCSV(){
-  const cols=["tradeDate","tradeId","venue","side","product","tonnes","pricing","diff","strike","avgStart","avgEnd","prompt","unpriced","status","notes"];
   const esc=v=>{v=v??"";return /[",\n]/.test(v)?'"'+(""+v).replace(/"/g,'""')+'"':v;};
-  const csv=[cols.join(",")].concat(hedges.map(h=>cols.map(c=>esc(h[c])).join(","))).join("\n");
-  download("hedge-ledger-"+new Date().toISOString().slice(0,10)+".csv", csv, "text/csv"); toast("CSV downloaded");
-}
-async function clearAllInternal(){
-  if(mode==="sheets"){ await gsPost("clear", {}); hedges=[]; }
-  else if(mode==="cloud"){ const { error } = await sb.from("hedges").delete().neq("id","00000000-0000-0000-0000-000000000000"); if(error) throw error; hedges=[]; }
-  else { hedges=[]; saveLocal(); }
+  const csv=[CSV_COLS.join(",")].concat(hedges.map(h=>CSV_COLS.map(c=> c==="status"?(isSettled(h)?"Settled":"Open"):esc(h[c])).join(","))).join("\n");
+  download("trade-ledger-"+new Date().toISOString().slice(0,10)+".csv", csv, "text/csv"); toast("CSV downloaded");
 }
 function genericSample(){
   return [
-    {tradeDate:"2026-01-05", tradeId:"SAMPLE-01", venue:"LME", side:"Buy",  product:"Avg Primary Aluminium", tonnes:100, pricing:"Average", diff:7, strike:"", avgStart:"", avgEnd:"", prompt:"2026-04-15", unpriced:60, status:"Open", notes:"Example only — edit or delete"},
-    {tradeDate:"2026-01-12", tradeId:"SAMPLE-02", venue:"LME", side:"Sell", product:"Avg Primary Aluminium", tonnes:50,  pricing:"Average", diff:"", strike:"", avgStart:"", avgEnd:"", prompt:"2026-05-20", unpriced:50, status:"Open", notes:"Example only"},
-    {tradeDate:"2026-02-02", tradeId:"SAMPLE-03", venue:"OTC", side:"Buy",  product:"OTCM Primary Aluminium", tonnes:25, pricing:"Fixed", diff:"", strike:2700, avgStart:"", avgEnd:"", prompt:"2026-06-17", unpriced:0, status:"Open", notes:"Example fixed-price leg"},
+    {tradeDate:"2026-01-05", side:"Sell", lots:100, price:2700, customer:"Acme Extrusions", po:"PO-1001", prompt:"2026-04-15", deliveryMonth:"2026-04", closePrice:"", venue:"OTC", product:"Primary Aluminium", pricing:"Fixed", diff:"", strike:"", unpriced:0, avgStart:"", avgEnd:"", status:"Open", notes:"Example open — edit or delete"},
+    {tradeDate:"2026-01-12", side:"Buy", lots:50, price:2650, customer:"Northwind Metals", po:"PO-1002", prompt:"2026-05-20", deliveryMonth:"2026-05", closePrice:2715, venue:"OTC", product:"Primary Aluminium", pricing:"Fixed", diff:"", strike:"", unpriced:0, avgStart:"", avgEnd:"", status:"Settled", notes:"Example settled (+P&L)"},
+    {tradeDate:"2026-02-02", side:"Sell", lots:25, price:2780, customer:"Cascade Foil", po:"PO-1003", prompt:"2026-06-17", deliveryMonth:"2026-06", closePrice:"", venue:"OTC", product:"Primary Aluminium", pricing:"Fixed", diff:"", strike:"", unpriced:0, avgStart:"", avgEnd:"", status:"Open", notes:"Example open"},
   ];
 }
 async function loadSample(){
   if(hedges.length && !confirm("Add 3 example rows to the current book?")) return;
-  try{ await persistMany(genericSample()); render(); toast("Sample rows added"); }
-  catch(e){ toast("Failed: "+(e.message||e)); }
+  try{ await persistMany(genericSample()); render(); toast("Sample rows added"); }catch(e){ toast("Failed: "+(e.message||e)); }
 }
 
 /* ============================================================
-   SETUP / CONNECT
+   SETUP / CONNECT (Google Sheet)
    ============================================================ */
 function openSetup(){
   document.getElementById("gs_url").value = localStorage.getItem("gs_url") || (GSHEET_URL||"");
@@ -825,17 +770,14 @@ function openSetup(){
 }
 function closeSetup(){ document.getElementById("setupOverlay").classList.remove("show"); }
 function saveSetup(){
-  const url = document.getElementById("gs_url").value.trim();
-  const pass = document.getElementById("gs_pass").value.trim();
+  const url = document.getElementById("gs_url").value.trim(), pass = document.getElementById("gs_pass").value.trim();
   if(!url){ toast("Enter the web app URL."); return; }
-  localStorage.setItem("gs_url", url);
-  if(pass) localStorage.setItem("gs_pass", pass); else localStorage.removeItem("gs_pass");
+  localStorage.setItem("gs_url", url); if(pass) localStorage.setItem("gs_pass", pass); else localStorage.removeItem("gs_pass");
   toast("Connected — reloading…"); setTimeout(()=>location.reload(), 600);
 }
 function disconnectDb(){
   if(!confirm("Disconnect this browser from the shared Sheet and go back to local mode?")) return;
-  localStorage.removeItem("gs_url"); localStorage.removeItem("gs_pass");
-  setTimeout(()=>location.reload(), 300);
+  localStorage.removeItem("gs_url"); localStorage.removeItem("gs_pass"); setTimeout(()=>location.reload(), 300);
 }
 
 /* ============================================================

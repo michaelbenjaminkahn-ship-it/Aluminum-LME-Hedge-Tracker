@@ -18,9 +18,9 @@ const PASSCODE   = 'change-me-to-a-shared-passcode';   // <-- set this
 
 // Columns the app manages. You may ADD your own extra columns to the right;
 // just don't rename or remove these, and never edit the "id" column by hand.
-const FIELDS = ['id','tradeDate','tradeId','venue','side','product','tonnes',
-                'pricing','diff','strike','avgStart','avgEnd','prompt',
-                'unpriced','status','notes','updatedAt'];
+const FIELDS = ['id','tradeDate','side','lots','price','customer','po','prompt',
+                'deliveryMonth','closePrice','venue','product','pricing','diff',
+                'strike','unpriced','avgStart','avgEnd','status','notes','updatedAt'];
 
 function doGet(e)  { return route_(parseGet_(e)); }
 function doPost(e) { var p = {}; try { p = JSON.parse(e.postData.contents); } catch (err) {} return route_(p); }
