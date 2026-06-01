@@ -157,6 +157,18 @@
   </div>
 </div>
 
+<!-- ============ PASSCODE SCREEN (Google Sheet mode) ============ -->
+<div id="passScreen" class="hidden" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:80;padding:20px">
+  <div class="auth-card">
+    <h1>Excel Metals — Hedge Tracker</h1>
+    <div class="sub">Enter the shared passcode to open the book.</div>
+    <div class="field"><label>Passcode</label><input id="passInput" type="password" autocomplete="off" placeholder="••••••••" onkeydown="if(event.key==='Enter')doPass()" /></div>
+    <button class="primary" id="passBtn" onclick="doPass()">Open tracker</button>
+    <div class="auth-err" id="passErr"></div>
+    <div class="auth-foot"><a onclick="openSetup()">Set up / change the Google Sheet connection</a></div>
+  </div>
+</div>
+
 <!-- ============ MAIN APP ============ -->
 <div class="wrap hidden" id="appWrap">
   <header class="app">
@@ -267,12 +279,12 @@
 <!-- Setup / connect modal -->
 <div class="overlay" id="setupOverlay">
   <div class="modal narrow">
-    <div class="mhead"><h3>Connect shared database</h3><button class="close-x" onclick="closeSetup()">&times;</button></div>
+    <div class="mhead"><h3>Connect to your Google Sheet</h3><button class="close-x" onclick="closeSetup()">&times;</button></div>
     <div class="mbody single">
-      <p class="muted" style="margin-top:0">Paste the two values from your Supabase project (Settings → API). The anon key is safe to store here.</p>
-      <div class="field"><label>Project URL</label><input id="sb_url" type="text" placeholder="https://xxxx.supabase.co" /></div>
-      <div class="field"><label>Anon public key</label><input id="sb_key" type="text" placeholder="eyJhbGci…" /></div>
-      <p class="muted" style="font-size:11px;margin-bottom:0">See <b>SUPABASE_SETUP.md</b> in the repo for step-by-step setup.</p>
+      <p class="muted" style="margin-top:0">Paste the Apps Script <b>web-app URL</b> (ends in <code>/exec</code>) and the shared <b>passcode</b> you set in the script.</p>
+      <div class="field"><label>Web app URL</label><input id="gs_url" type="text" placeholder="https://script.google.com/macros/s/…/exec" /></div>
+      <div class="field"><label>Passcode</label><input id="gs_pass" type="text" placeholder="your shared passcode" /></div>
+      <p class="muted" style="font-size:11px;margin-bottom:0">Step-by-step in <b>GOOGLE_SHEETS_SETUP.md</b>.</p>
     </div>
     <div class="mfoot"><span></span>
       <div style="display:flex;gap:8px"><button id="disconnectBtn" class="danger ghost" onclick="disconnectDb()">Disconnect</button><button class="primary" onclick="saveSetup()">Connect</button></div>
@@ -291,6 +303,10 @@
 const SUPABASE_URL  = "";   // e.g. "https://abcd.supabase.co"
 const SUPABASE_ANON_KEY = "";   // e.g. "eyJhbGciOi..."
 
+/* Google Sheet backend (recommended for this workflow): paste your Apps Script
+   web-app /exec URL here, or connect it in-app via "Connect shared book". */
+const GSHEET_URL = "";
+
 /* ---------- state ---------- */
 let hedges = [];
 let mode = "local";      // "local" | "cloud"
@@ -305,13 +321,32 @@ function sbConfig(){
     key: SUPABASE_ANON_KEY || localStorage.getItem("sb_key") || "",
   };
 }
+function gsConfig(){
+  return {
+    url: GSHEET_URL || localStorage.getItem("gs_url") || "",
+    pass: localStorage.getItem("gs_pass") || "",
+  };
+}
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
 /* ============================================================
    INIT
    ============================================================ */
 async function init(){
-  const cfg = sbConfig();
+  const gs = gsConfig(), cfg = sbConfig();
+  // price persists per-browser in every mode
+  const p = localStorage.getItem(LKEY+"_price");
+  if(p) document.getElementById("mktPrice").value = p;
+
+  if(gs.url){
+    mode = "sheets";
+    if(!gs.pass){ showPass(); return; }
+    const r = await loadSheets();
+    if(r.ok) enterApp();
+    else if(/passcode/i.test(r.err||"")) showPass("That passcode didn't work — try again.");
+    else { toast("Couldn't reach the Sheet: "+(r.err||"")); showPass("Connection problem. Check the passcode or try again."); }
+    return;
+  }
   if(cfg.url && cfg.key && window.supabase){
     mode = "cloud";
     sb = window.supabase.createClient(cfg.url, cfg.key);
@@ -322,14 +357,11 @@ async function init(){
     const { data:{ session } } = await sb.auth.getSession();
     if(session && session.user){ me = session.user; enterApp(); }
     else showAuth();
-  } else {
-    mode = "local";
-    loadLocal();
-    enterApp();
+    return;
   }
-  // price persists per-browser in both modes
-  const p = localStorage.getItem(LKEY+"_price");
-  if(p) document.getElementById("mktPrice").value = p;
+  mode = "local";
+  loadLocal();
+  enterApp();
 }
 
 function showAuth(){
@@ -338,11 +370,17 @@ function showAuth(){
 }
 async function enterApp(){
   document.getElementById("authScreen").classList.add("hidden");
+  const ps = document.getElementById("passScreen"); if(ps) ps.classList.add("hidden");
   document.getElementById("appWrap").classList.remove("hidden");
-  // mode-specific chrome
-  document.getElementById("connectBtn").style.display = (mode==="cloud") ? "none" : "";
+  document.getElementById("connectBtn").style.display = (mode==="local") ? "" : "none";
   const chip = document.getElementById("userChip");
-  if(mode==="cloud" && me){
+  if(mode==="sheets"){
+    chip.innerHTML = `<span class="dot"></span> Shared via Google Sheet · <a onclick="refreshNow()">Refresh</a> · <a onclick="openSetup()">settings</a>`;
+    document.getElementById("footNote").innerHTML =
+      "Data lives in your Google Sheet. Entries here add rows to it; edits made in the Sheet appear here on refresh. Indicative MTM is an estimate vs the price you enter.";
+    render();          // loadSheets already populated hedges before enterApp()
+    startSheetsPolling();
+  } else if(mode==="cloud" && me){
     chip.innerHTML = `<span class="dot"></span> Shared book · ${me.email} · <a onclick="signOut()">Sign out</a>`;
     document.getElementById("footNote").innerHTML =
       "Shared live with your team. Indicative MTM is an estimate vs the price you enter — not a substitute for the broker statement.";
@@ -373,6 +411,59 @@ async function doLogin(){
 }
 async function signOut(){ if(sb) await sb.auth.signOut(); }
 
+/* ---- Google Sheet passcode gate ---- */
+function showPass(msg){
+  document.getElementById("appWrap").classList.add("hidden");
+  document.getElementById("authScreen").classList.add("hidden");
+  document.getElementById("passScreen").classList.remove("hidden");
+  document.getElementById("passErr").textContent = msg || "";
+}
+async function doPass(){
+  const pass = document.getElementById("passInput").value.trim();
+  if(!pass){ document.getElementById("passErr").textContent = "Enter the passcode."; return; }
+  localStorage.setItem("gs_pass", pass);
+  const btn = document.getElementById("passBtn"); btn.disabled = true; btn.textContent = "Connecting…";
+  const r = await loadSheets();
+  btn.disabled = false; btn.textContent = "Open tracker";
+  if(r.ok) enterApp();
+  else if(/passcode/i.test(r.err||"")) { localStorage.removeItem("gs_pass"); document.getElementById("passErr").textContent = "Wrong passcode."; }
+  else document.getElementById("passErr").textContent = "Couldn't reach the Sheet. "+(r.err||"");
+}
+
+/* ============================================================
+   GOOGLE SHEET DATA LAYER
+   ============================================================ */
+function normalizeRow(r){
+  const o = Object.assign({}, r);
+  ["diff","strike"].forEach(k=>{ if(o[k]==="" || o[k]===null || o[k]===undefined) o[k]=""; else o[k]=num(o[k]); });
+  ["tonnes","unpriced"].forEach(k=>{ o[k] = num(o[k]); });
+  ["tradeDate","avgStart","avgEnd","prompt"].forEach(k=>{ if(o[k]) o[k]=toISO(o[k])||o[k]; });
+  return o;
+}
+async function loadSheets(){
+  const { url, pass } = gsConfig();
+  try{
+    const res = await fetch(url + (url.includes("?")?"&":"?") + "action=list&token=" + encodeURIComponent(pass));
+    const j = await res.json();
+    if(j.error) return { ok:false, err:j.error };
+    hedges = (j.rows||[]).map(normalizeRow);
+    return { ok:true };
+  }catch(e){ return { ok:false, err:e.message }; }
+}
+async function gsPost(action, payload){
+  const { url, pass } = gsConfig();
+  const res = await fetch(url, { method:"POST", body: JSON.stringify(Object.assign({ token:pass, action }, payload)) });
+  const j = await res.json();
+  if(j.error) throw new Error(j.error);
+  return j;
+}
+async function refreshNow(){ const r = await loadSheets(); if(r.ok){ render(); toast("Refreshed from Sheet"); } else toast("Refresh failed: "+(r.err||"")); }
+let sheetsPoll = null, focusBound = false;
+function startSheetsPolling(){
+  if(!sheetsPoll) sheetsPoll = setInterval(async()=>{ const r = await loadSheets(); if(r.ok) render(); }, 30000);
+  if(!focusBound){ focusBound = true; window.addEventListener("focus", async()=>{ const r = await loadSheets(); if(r.ok) render(); }); }
+}
+
 /* ============================================================
    DATA LAYER
    ============================================================ */
@@ -400,7 +491,10 @@ function subscribeRealtime(){
 function stripId(o){ const c = Object.assign({}, o); delete c.id; return c; }
 
 async function persistAdd(fields){
-  if(mode==="cloud"){
+  if(mode==="sheets"){
+    const j = await gsPost("add", { row: fields });
+    hedges.push(Object.assign({ id:j.id }, fields));
+  } else if(mode==="cloud"){
     const { data, error } = await sb.from("hedges").insert({ data:fields }).select("id,data").single();
     if(error) throw error;
     hedges.push(Object.assign({ id:data.id }, data.data));
@@ -409,7 +503,9 @@ async function persistAdd(fields){
   }
 }
 async function persistUpdate(id, fields){
-  if(mode==="cloud"){
+  if(mode==="sheets"){
+    await gsPost("update", { id, row: fields });
+  } else if(mode==="cloud"){
     const { error } = await sb.from("hedges").update({ data:fields, updated_at:new Date().toISOString() }).eq("id", id);
     if(error) throw error;
   }
@@ -418,12 +514,16 @@ async function persistUpdate(id, fields){
   if(mode==="local") saveLocal();
 }
 async function persistRemove(id){
-  if(mode==="cloud"){ const { error } = await sb.from("hedges").delete().eq("id", id); if(error) throw error; }
+  if(mode==="sheets"){ await gsPost("delete", { id }); }
+  else if(mode==="cloud"){ const { error } = await sb.from("hedges").delete().eq("id", id); if(error) throw error; }
   hedges = hedges.filter(x=>x.id!==id);
   if(mode==="local") saveLocal();
 }
 async function persistMany(recs){
-  if(mode==="cloud"){
+  if(mode==="sheets"){
+    await gsPost("addMany", { rows: recs.map(stripId) });
+    const r = await loadSheets(); if(!r.ok) throw new Error(r.err||"reload failed");
+  } else if(mode==="cloud"){
     const rows = recs.map(r=>({ data: stripId(r) }));
     const { error } = await sb.from("hedges").insert(rows); if(error) throw error;
     await loadCloud();
@@ -697,7 +797,8 @@ function exportCSV(){
   download("hedge-ledger-"+new Date().toISOString().slice(0,10)+".csv", csv, "text/csv"); toast("CSV downloaded");
 }
 async function clearAllInternal(){
-  if(mode==="cloud"){ const { error } = await sb.from("hedges").delete().neq("id","00000000-0000-0000-0000-000000000000"); if(error) throw error; hedges=[]; }
+  if(mode==="sheets"){ await gsPost("clear", {}); hedges=[]; }
+  else if(mode==="cloud"){ const { error } = await sb.from("hedges").delete().neq("id","00000000-0000-0000-0000-000000000000"); if(error) throw error; hedges=[]; }
   else { hedges=[]; saveLocal(); }
 }
 function genericSample(){
@@ -717,23 +818,23 @@ async function loadSample(){
    SETUP / CONNECT
    ============================================================ */
 function openSetup(){
-  const cfg = sbConfig();
-  document.getElementById("sb_url").value = localStorage.getItem("sb_url") || (SUPABASE_URL||"");
-  document.getElementById("sb_key").value = localStorage.getItem("sb_key") || (SUPABASE_ANON_KEY||"");
-  document.getElementById("disconnectBtn").style.display = (cfg.url&&cfg.key)?"":"none";
+  document.getElementById("gs_url").value = localStorage.getItem("gs_url") || (GSHEET_URL||"");
+  document.getElementById("gs_pass").value = localStorage.getItem("gs_pass") || "";
+  document.getElementById("disconnectBtn").style.display = (gsConfig().url)?"":"none";
   document.getElementById("setupOverlay").classList.add("show");
 }
 function closeSetup(){ document.getElementById("setupOverlay").classList.remove("show"); }
 function saveSetup(){
-  const url = document.getElementById("sb_url").value.trim();
-  const key = document.getElementById("sb_key").value.trim();
-  if(!url || !key){ toast("Enter both the URL and the anon key."); return; }
-  localStorage.setItem("sb_url", url); localStorage.setItem("sb_key", key);
+  const url = document.getElementById("gs_url").value.trim();
+  const pass = document.getElementById("gs_pass").value.trim();
+  if(!url){ toast("Enter the web app URL."); return; }
+  localStorage.setItem("gs_url", url);
+  if(pass) localStorage.setItem("gs_pass", pass); else localStorage.removeItem("gs_pass");
   toast("Connected — reloading…"); setTimeout(()=>location.reload(), 600);
 }
 function disconnectDb(){
-  if(!confirm("Disconnect this browser from the shared book and go back to local mode?")) return;
-  localStorage.removeItem("sb_url"); localStorage.removeItem("sb_key");
+  if(!confirm("Disconnect this browser from the shared Sheet and go back to local mode?")) return;
+  localStorage.removeItem("gs_url"); localStorage.removeItem("gs_pass");
   setTimeout(()=>location.reload(), 300);
 }
 

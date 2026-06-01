@@ -4,16 +4,23 @@ A clean, simple tracker for primary-aluminium LME and OTC hedges — built to
 replace a cluttered broker tool and hard-to-read statements with something neat,
 easy to print, and shared live between you and your team.
 
-## Two ways it runs
+## Three ways it runs
 
-- **Shared mode (recommended)** — you and your team log in and see **one live
-  book** that syncs for everyone. Backed by a free Supabase database. Setup is a
-  one-time ~10 minutes: see **[SUPABASE_SETUP.md](SUPABASE_SETUP.md)**.
-- **Local mode** — open `index.html` with no database configured and it works
+The screens are identical in every mode; only *where the data lives* changes.
+
+- **Google Sheet back end (recommended)** — your Google Sheet is the master copy.
+  You work in the Sheet directly; the app is the entry form + summary that reads
+  and writes to it via a small Apps Script, gated by a shared passcode. One-time
+  ~10-min setup: see **[GOOGLE_SHEETS_SETUP.md](GOOGLE_SHEETS_SETUP.md)** and
+  **[apps-script/Code.gs](apps-script/Code.gs)**.
+- **Supabase back end** — one live shared book with real per-person logins.
+  Use this instead if you want individual accounts rather than a shared passcode:
+  see **[SUPABASE_SETUP.md](SUPABASE_SETUP.md)**.
+- **Local mode** — open `index.html` with nothing configured and it works
   entirely in your own browser (data stored locally, synced via Export/Import).
   Good for trying it out.
 
-The screens are identical either way; only where the data lives changes.
+Connect a back end any time via the **Connect shared book** button in the app.
 
 ## What it shows
 
