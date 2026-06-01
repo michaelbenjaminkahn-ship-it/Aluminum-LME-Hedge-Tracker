@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Excel Metals — Aluminium Hedge Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --bg:#f4f6f8; --panel:#ffffff; --ink:#1c2733; --muted:#6b7884; --line:#e4e9ee;
+    --accent:#1f5f8b; --accent-soft:#eaf2f8;
+    --long:#1c7c54; --long-soft:#e7f4ee; --short:#b3392f; --short-soft:#fbeceb;
+    --warn:#9a6b00; --warn-soft:#fbf3e0; --radius:10px;
+    --shadow:0 1px 2px rgba(20,30,40,.06), 0 4px 14px rgba(20,30,40,.05);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 22px 60px}
+  .hidden{display:none !important}
+
+  /* Header */
+  header.app{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:18px}
+  .brand h1{margin:0;font-size:19px;letter-spacing:.2px}
+  .brand .sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .hdr-right{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+  .price-box{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:10px 14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
+  .price-box label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;display:block}
+  .price-box input{font-size:18px;font-weight:600;border:none;outline:none;width:120px;color:var(--ink);
+    border-bottom:2px solid var(--accent);background:transparent;padding:2px 0}
+  .price-box .unit{font-size:12px;color:var(--muted)}
+  .user-chip{font-size:11.5px;color:var(--muted);display:flex;gap:8px;align-items:center}
+  .user-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--long)}
+  .user-chip a{color:var(--accent);cursor:pointer;text-decoration:none}
+  .user-chip a:hover{text-decoration:underline}
+  .asof{font-size:11px;color:var(--muted);text-align:right}
+
+  /* Cards */
+  .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:13px 15px;box-shadow:var(--shadow)}
+  .card .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .card .v{font-size:23px;font-weight:650;margin-top:5px;letter-spacing:.2px}
+  .card .x{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .v.long{color:var(--long)} .v.short{color:var(--short)} .v.warn{color:var(--warn)}
+  .v.pos{color:var(--long)} .v.neg{color:var(--short)}
+
+  /* Panels */
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+  .panel .head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 15px;border-bottom:1px solid var(--line)}
+  .panel .head h2{margin:0;font-size:13.5px;letter-spacing:.3px}
+  .panel .head .hint{font-size:11.5px;color:var(--muted)}
+
+  /* Toolbar */
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .toolbar .spacer{flex:1}
+  button,.btn{font:inherit;font-size:12.5px;font-weight:550;cursor:pointer;border:1px solid var(--line);
+    background:var(--panel);color:var(--ink);padding:7px 13px;border-radius:8px;transition:.12s}
+  button:hover,.btn:hover{border-color:#cdd6de;background:#fafcfe}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover{background:#1b547a}
+  button.ghost{background:transparent}
+  button.danger:hover{border-color:var(--short);color:var(--short)}
+  button:disabled{opacity:.5;cursor:default}
+  select,input[type=text],input[type=date],input[type=number],input[type=email],input[type=password]{
+    font:inherit;font-size:12.5px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);outline:none}
+  select:focus,input:focus{border-color:var(--accent)}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+  /* Tables */
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;cursor:pointer;user-select:none;background:#fbfcfd}
+  th.sortable:hover{color:var(--ink)}
+  th .arrow{opacity:.4;font-size:9px}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tbody tr:hover{background:#f8fbfd}
+  .tag{display:inline-block;font-size:10.5px;font-weight:650;padding:2px 8px;border-radius:20px;letter-spacing:.3px}
+  .tag.buy{background:var(--long-soft);color:var(--long)}
+  .tag.sell{background:var(--short-soft);color:var(--short)}
+  .tag.venue{background:var(--accent-soft);color:var(--accent)}
+  .tag.open{background:var(--long-soft);color:var(--long)}
+  .tag.closed{background:#eef1f4;color:var(--muted)}
+  .row-actions{display:flex;gap:6px;opacity:0;transition:.1s}
+  tr:hover .row-actions{opacity:1}
+  .row-actions button{padding:3px 8px;font-size:11px}
+  .pl-pos{color:var(--long);font-weight:600}
+  .pl-neg{color:var(--short);font-weight:600}
+  .muted{color:var(--muted)}
+  .empty{padding:40px;text-align:center;color:var(--muted)}
+
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(20,30,40,.45);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow:auto}
+  .overlay.show{display:flex}
+  .modal{background:var(--panel);border-radius:12px;width:100%;max-width:640px;box-shadow:0 18px 50px rgba(20,30,40,.3);overflow:hidden}
+  .modal.narrow{max-width:430px}
+  .modal .mhead{padding:15px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .modal .mhead h3{margin:0;font-size:15px}
+  .modal .mbody{padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  .modal .mbody.single{display:block}
+  .modal .mbody .full{grid-column:1 / -1}
+  .field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .field input,.field select,.field textarea{width:100%}
+  .field textarea{font:inherit;font-size:12.5px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;resize:vertical;min-height:46px}
+  .field .help{font-size:10.5px;color:var(--muted);margin-top:3px}
+  .field+.field{margin-top:13px}
+  .modal .mfoot{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .close-x{cursor:pointer;color:var(--muted);font-size:20px;line-height:1;border:none;background:none;padding:4px}
+  textarea.import-area{width:100%;min-height:160px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;padding:10px;border:1px solid var(--line);border-radius:8px}
+
+  /* Auth screen */
+  #authScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:80;padding:20px}
+  .auth-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);width:100%;max-width:380px;padding:28px 26px}
+  .auth-card h1{font-size:18px;margin:0 0 4px}
+  .auth-card .sub{color:var(--muted);font-size:12.5px;margin-bottom:20px}
+  .auth-card .field{margin-bottom:13px}
+  .auth-card button.primary{width:100%;padding:10px;font-size:14px;margin-top:4px}
+  .auth-err{color:var(--short);font-size:12.5px;margin-top:10px;min-height:16px}
+  .auth-foot{margin-top:16px;font-size:11.5px;color:var(--muted);text-align:center}
+  .auth-foot a{color:var(--accent);cursor:pointer}
+
+  footer.app{color:var(--muted);font-size:11px;text-align:center;margin-top:26px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:99}
+  .toast.show{opacity:1}
+
+  @media (max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.modal .mbody{grid-template-columns:1fr}}
+  @media print{
+    body{background:#fff;font-size:11px}.wrap{max-width:none;padding:0}
+    .no-print,.toolbar,.row-actions,.price-box input,.user-chip{display:none !important}
+    .panel,.card{box-shadow:none;border:1px solid #ccc}.cards{grid-template-columns:repeat(5,1fr)}
+    th{background:#fff !important}tbody tr:hover{background:none}header.app{margin-bottom:10px}.print-only{display:block !important}
+  }
+  .print-only{display:none}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN (cloud mode only) ============ -->
+<div id="authScreen" class="hidden">
+  <div class="auth-card">
+    <h1>Excel Metals — Hedge Tracker</h1>
+    <div class="sub">Sign in to your shared book.</div>
+    <div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="username" placeholder="you@excelmetalsllc.com" /></div>
+    <div class="field"><label>Password</label><input id="authPass" type="password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+    <button class="primary" id="authBtn" onclick="doLogin()">Sign in</button>
+    <div class="auth-err" id="authErr"></div>
+    <div class="auth-foot">Trouble signing in? Ask your admin, or <a onclick="openSetup()">reconnect the database</a>.</div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div class="wrap hidden" id="appWrap">
+  <header class="app">
+    <div class="brand">
+      <h1>Excel Metals LLC — Aluminium Hedge Tracker</h1>
+      <div class="sub">Primary Aluminium · LME &amp; OTC hedges</div>
+    </div>
+    <div class="hdr-right">
+      <div class="price-box">
+        <div><label>Current LME price</label><input id="mktPrice" type="number" step="0.01" placeholder="3400.00" /></div>
+        <span class="unit">USD / tonne</span>
+      </div>
+      <div class="user-chip" id="userChip"></div>
+      <div class="asof print-only" id="printDate"></div>
+    </div>
+  </header>
+
+  <section class="cards" id="cards"></section>
+
+  <section class="panel">
+    <div class="head">
+      <h2>Net Position by Prompt Month</h2>
+      <span class="hint">Long − Short, with unpriced (floating) exposure</span>
+    </div>
+    <table>
+      <thead><tr>
+        <th>Prompt month</th><th class="num">Long (t)</th><th class="num">Short (t)</th>
+        <th class="num">Net (t)</th><th class="num">Priced (t)</th><th class="num">Unpriced (t)</th><th class="num">Indic. MTM</th>
+      </tr></thead>
+      <tbody id="monthBody"></tbody>
+    </table>
+  </section>
+
+  <div class="toolbar no-print">
+    <button class="primary" onclick="openEditor()">+ Add hedge</button>
+    <button onclick="openImport()">Import</button>
+    <button onclick="exportJSON()">Export backup</button>
+    <button onclick="exportCSV()">Export CSV</button>
+    <button onclick="window.print()">Print</button>
+    <button onclick="loadSample()">Sample data</button>
+    <button class="danger ghost" id="connectBtn" onclick="openSetup()">Connect shared book</button>
+    <div class="spacer"></div>
+    <div class="filters">
+      <input id="search" type="text" placeholder="Search trade id / product…" oninput="render()" style="width:200px" />
+      <select id="fVenue" onchange="render()"><option value="">All venues</option><option>LME</option><option>OTC</option></select>
+      <select id="fSide" onchange="render()"><option value="">Buy &amp; Sell</option><option value="Buy">Buy only</option><option value="Sell">Sell only</option></select>
+      <select id="fStatus" onchange="render()"><option value="Open">Open only</option><option value="">All statuses</option><option value="Closed">Closed only</option></select>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="head"><h2>Hedge Ledger</h2><span class="hint" id="ledgerCount"></span></div>
+    <div style="overflow-x:auto">
+      <table id="ledger"><thead><tr id="ledgerHead"></tr></thead><tbody id="ledgerBody"></tbody></table>
+    </div>
+  </section>
+
+  <footer class="app" id="footNote"></footer>
+</div>
+
+<!-- Editor modal -->
+<div class="overlay" id="editorOverlay">
+  <div class="modal">
+    <div class="mhead"><h3 id="editorTitle">Add hedge</h3><button class="close-x" onclick="closeEditor()">&times;</button></div>
+    <div class="mbody">
+      <div class="field"><label>Trade date</label><input id="f_tradeDate" type="date" /></div>
+      <div class="field"><label>Trade ID (broker ref)</label><input id="f_tradeId" type="text" placeholder="broker trade ref" /></div>
+      <div class="field"><label>Venue</label><select id="f_venue"><option>LME</option><option>OTC</option></select></div>
+      <div class="field"><label>Side</label><select id="f_side"><option value="Buy">Buy / Long</option><option value="Sell">Sell / Short</option></select></div>
+      <div class="field"><label>Product</label>
+        <input id="f_product" type="text" list="productList" placeholder="Avg Primary Aluminium" />
+        <datalist id="productList"><option>Avg Primary Aluminium</option><option>OTCM Primary Aluminium</option><option>OTC CAPS Primary Aluminium</option><option>Float v Float</option></datalist>
+      </div>
+      <div class="field"><label>Quantity (tonnes)</label><input id="f_tonnes" type="number" step="0.0001" placeholder="125" /></div>
+      <div class="field"><label>Pricing</label><select id="f_pricing" onchange="syncPricingFields()"><option value="Average">Average (ASP / float)</option><option value="Fixed">Fixed price</option></select></div>
+      <div class="field"><label>Differential</label><input id="f_diff" type="number" step="0.01" placeholder="e.g. 7 for ASP+7, -46" /><div class="help">Premium over the average (ASP+x). Blank if flat.</div></div>
+      <div class="field" id="strikeField"><label>Fixed strike (USD/t)</label><input id="f_strike" type="number" step="0.01" placeholder="2727.00" /><div class="help">Used for indicative MTM on fixed legs.</div></div>
+      <div class="field"><label>Status</label><select id="f_status"><option>Open</option><option>Closed</option></select></div>
+      <div class="field"><label>Avg start</label><input id="f_avgStart" type="date" /></div>
+      <div class="field"><label>Avg end</label><input id="f_avgEnd" type="date" /></div>
+      <div class="field"><label>Prompt / settlement</label><input id="f_prompt" type="date" /></div>
+      <div class="field"><label>Unpriced (floating) tonnes</label><input id="f_unpriced" type="number" step="0.0001" placeholder="90.9091" /><div class="help">Lots not yet fixed. Priced = quantity − unpriced.</div></div>
+      <div class="field full"><label>Notes</label><textarea id="f_notes" placeholder="e.g. hedge vs physical cargo"></textarea></div>
+    </div>
+    <div class="mfoot">
+      <button class="danger ghost" id="deleteBtn" onclick="deleteCurrent()" style="visibility:hidden">Delete</button>
+      <div style="display:flex;gap:8px"><button onclick="closeEditor()">Cancel</button><button class="primary" id="saveBtn" onclick="saveEditor()">Save hedge</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Import modal -->
+<div class="overlay" id="importOverlay">
+  <div class="modal">
+    <div class="mhead"><h3>Import trades</h3><button class="close-x" onclick="closeImport()">&times;</button></div>
+    <div class="mbody single">
+      <p class="muted" style="margin-top:0">Paste CSV rows, or a JSON backup. CSV header (any order):<br>
+        <code style="font-size:11px">tradeDate, tradeId, venue, side, product, tonnes, pricing, diff, strike, avgStart, avgEnd, prompt, unpriced, status, notes</code></p>
+      <textarea id="importText" class="import-area" placeholder="Paste here…"></textarea>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:12.5px"><input type="checkbox" id="importReplace" style="width:auto"> Replace everything (otherwise append)</label>
+    </div>
+    <div class="mfoot"><span class="muted" style="font-size:11.5px">Dates accept 12-Dec-2025, 2025-12-12 or 12/12/2025.</span>
+      <div style="display:flex;gap:8px"><button onclick="closeImport()">Cancel</button><button class="primary" onclick="runImport()">Import</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Setup / connect modal -->
+<div class="overlay" id="setupOverlay">
+  <div class="modal narrow">
+    <div class="mhead"><h3>Connect shared database</h3><button class="close-x" onclick="closeSetup()">&times;</button></div>
+    <div class="mbody single">
+      <p class="muted" style="margin-top:0">Paste the two values from your Supabase project (Settings → API). The anon key is safe to store here.</p>
+      <div class="field"><label>Project URL</label><input id="sb_url" type="text" placeholder="https://xxxx.supabase.co" /></div>
+      <div class="field"><label>Anon public key</label><input id="sb_key" type="text" placeholder="eyJhbGci…" /></div>
+      <p class="muted" style="font-size:11px;margin-bottom:0">See <b>SUPABASE_SETUP.md</b> in the repo for step-by-step setup.</p>
+    </div>
+    <div class="mfoot"><span></span>
+      <div style="display:flex;gap:8px"><button id="disconnectBtn" class="danger ghost" onclick="disconnectDb()">Disconnect</button><button class="primary" onclick="saveSetup()">Connect</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   CONFIG — when you have your Supabase project, paste the two
+   values here (or use the "Connect shared book" button in-app).
+   Leaving them blank runs the tracker locally in this browser.
+   ============================================================ */
+const SUPABASE_URL  = "";   // e.g. "https://abcd.supabase.co"
+const SUPABASE_ANON_KEY = "";   // e.g. "eyJhbGciOi..."
+
+/* ---------- state ---------- */
+let hedges = [];
+let mode = "local";      // "local" | "cloud"
+let sb = null;           // supabase client
+let me = null;           // logged-in user
+let sortKey = "prompt", sortDir = 1, editingId = null;
+const LKEY = "excel_metals_hedges_v1";
+
+function sbConfig(){
+  return {
+    url: SUPABASE_URL || localStorage.getItem("sb_url") || "",
+    key: SUPABASE_ANON_KEY || localStorage.getItem("sb_key") || "",
+  };
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+/* ============================================================
+   INIT
+   ============================================================ */
+async function init(){
+  const cfg = sbConfig();
+  if(cfg.url && cfg.key && window.supabase){
+    mode = "cloud";
+    sb = window.supabase.createClient(cfg.url, cfg.key);
+    sb.auth.onAuthStateChange((_e, session)=>{
+      if(session && session.user){ me = session.user; enterApp(); }
+      else { me = null; showAuth(); }
+    });
+    const { data:{ session } } = await sb.auth.getSession();
+    if(session && session.user){ me = session.user; enterApp(); }
+    else showAuth();
+  } else {
+    mode = "local";
+    loadLocal();
+    enterApp();
+  }
+  // price persists per-browser in both modes
+  const p = localStorage.getItem(LKEY+"_price");
+  if(p) document.getElementById("mktPrice").value = p;
+}
+
+function showAuth(){
+  document.getElementById("appWrap").classList.add("hidden");
+  document.getElementById("authScreen").classList.remove("hidden");
+}
+async function enterApp(){
+  document.getElementById("authScreen").classList.add("hidden");
+  document.getElementById("appWrap").classList.remove("hidden");
+  // mode-specific chrome
+  document.getElementById("connectBtn").style.display = (mode==="cloud") ? "none" : "";
+  const chip = document.getElementById("userChip");
+  if(mode==="cloud" && me){
+    chip.innerHTML = `<span class="dot"></span> Shared book · ${me.email} · <a onclick="signOut()">Sign out</a>`;
+    document.getElementById("footNote").innerHTML =
+      "Shared live with your team. Indicative MTM is an estimate vs the price you enter — not a substitute for the broker statement.";
+    await loadCloud();
+    subscribeRealtime();
+  } else {
+    chip.innerHTML = `<span class="dot" style="background:var(--muted)"></span> Local (this browser only) · <a onclick="openSetup()">connect shared book</a>`;
+    document.getElementById("footNote").innerHTML =
+      "Data is stored in this browser only. Use <b>Export backup</b> regularly, or connect a shared book to sync with your team.";
+    render();
+  }
+}
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+async function doLogin(){
+  const email = document.getElementById("authEmail").value.trim();
+  const pass = document.getElementById("authPass").value;
+  const err = document.getElementById("authErr");
+  err.textContent = "";
+  if(!email || !pass){ err.textContent = "Enter your email and password."; return; }
+  const btn = document.getElementById("authBtn"); btn.disabled = true; btn.textContent = "Signing in…";
+  try{
+    const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if(error) err.textContent = error.message;
+  } finally { btn.disabled = false; btn.textContent = "Sign in"; }
+}
+async function signOut(){ if(sb) await sb.auth.signOut(); }
+
+/* ============================================================
+   DATA LAYER
+   ============================================================ */
+function loadLocal(){
+  const raw = localStorage.getItem(LKEY);
+  hedges = raw ? safeParse(raw, []) : [];
+}
+function saveLocal(){ localStorage.setItem(LKEY, JSON.stringify(hedges)); }
+function safeParse(s, d){ try{ return JSON.parse(s); }catch(e){ return d; } }
+
+async function loadCloud(){
+  const { data, error } = await sb.from("hedges").select("id,data").order("updated_at",{ascending:false});
+  if(error){ toast("Load error: "+error.message); return; }
+  hedges = (data||[]).map(r => Object.assign({ id:r.id }, r.data));
+  render();
+}
+let rtChannel = null;
+function subscribeRealtime(){
+  if(rtChannel) return;
+  rtChannel = sb.channel("hedges-rt")
+    .on("postgres_changes", { event:"*", schema:"public", table:"hedges" }, ()=>loadCloud())
+    .subscribe();
+}
+
+function stripId(o){ const c = Object.assign({}, o); delete c.id; return c; }
+
+async function persistAdd(fields){
+  if(mode==="cloud"){
+    const { data, error } = await sb.from("hedges").insert({ data:fields }).select("id,data").single();
+    if(error) throw error;
+    hedges.push(Object.assign({ id:data.id }, data.data));
+  } else {
+    fields.id = uid(); hedges.push(fields); saveLocal();
+  }
+}
+async function persistUpdate(id, fields){
+  if(mode==="cloud"){
+    const { error } = await sb.from("hedges").update({ data:fields, updated_at:new Date().toISOString() }).eq("id", id);
+    if(error) throw error;
+  }
+  const h = hedges.find(x=>x.id===id);
+  if(h){ Object.keys(h).forEach(k=>{ if(k!=="id") delete h[k]; }); Object.assign(h, fields); }
+  if(mode==="local") saveLocal();
+}
+async function persistRemove(id){
+  if(mode==="cloud"){ const { error } = await sb.from("hedges").delete().eq("id", id); if(error) throw error; }
+  hedges = hedges.filter(x=>x.id!==id);
+  if(mode==="local") saveLocal();
+}
+async function persistMany(recs){
+  if(mode==="cloud"){
+    const rows = recs.map(r=>({ data: stripId(r) }));
+    const { error } = await sb.from("hedges").insert(rows); if(error) throw error;
+    await loadCloud();
+  } else {
+    recs.forEach(r=>{ if(!r.id) r.id = uid(); }); hedges = hedges.concat(recs); saveLocal();
+  }
+}
+
+/* ============================================================
+   DATE / NUMBER HELPERS
+   ============================================================ */
+const MON = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+function parseDate(s){
+  if(!s) return null; s = (""+s).trim(); let m;
+  if((m = s.match(/^(\d{4})-(\d{2})-(\d{2})/))) return new Date(+m[1], +m[2]-1, +m[3]);
+  if((m = s.match(/^(\d{1,2})[-\/ ]([A-Za-z]{3})[A-Za-z]*[-\/ ](\d{4})/))) return new Date(+m[3], MON[m[2].toLowerCase()], +m[1]);
+  if((m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/))) return new Date(+m[3], +m[1]-1, +m[2]);
+  const d = new Date(s); return isNaN(d) ? null : d;
+}
+function toISO(s){ const d = parseDate(s); return d ? d.toISOString().slice(0,10) : ""; }
+function fmtDate(s){ const d = parseDate(s); return d ? d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}) : "—"; }
+function monthKey(s){ const d = parseDate(s); return d ? d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0") : "zzzz"; }
+function monthLabel(s){ const d = parseDate(s); return d ? d.toLocaleDateString("en-GB",{month:"short",year:"numeric"}) : "Undated"; }
+function num(v){ const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+function fmtN(n,dp=2){ return (n<0?"-":"") + Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:dp,maximumFractionDigits:dp}); }
+function fmtT(n){ return fmtN(n, Math.abs(n%1)>0.0001 ? 2 : 0); }
+function fmtUSD(n){ return (n<0?"-$":"$") + Math.abs(n).toLocaleString("en-US",{maximumFractionDigits:0}); }
+function sideSign(h){ return h.side === "Buy" ? 1 : -1; }
+function priced(h){ return Math.max(0, num(h.tonnes) - num(h.unpriced)); }
+function mtm(h, price){ if(!price) return 0; const k = num(h.strike); if(!k) return 0; return (price - k) * num(h.tonnes) * sideSign(h); }
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function currentPrice(){ return num(document.getElementById("mktPrice").value); }
+function filtered(){
+  const q = document.getElementById("search").value.toLowerCase();
+  const v = document.getElementById("fVenue").value;
+  const s = document.getElementById("fSide").value;
+  const st = document.getElementById("fStatus").value;
+  return hedges.filter(h=>{
+    if(v && h.venue!==v) return false;
+    if(s && h.side!==s) return false;
+    if(st && h.status!==st) return false;
+    if(q && !((h.tradeId||"")+" "+(h.product||"")+" "+(h.notes||"")).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+function render(){
+  const price = currentPrice();
+  renderCards(price); renderMonths(price); renderLedger(price);
+  document.getElementById("printDate").textContent =
+    "Current price: " + (price?fmtN(price):"—") + " USD/t · Printed " + new Date().toLocaleDateString("en-GB");
+}
+function renderCards(price){
+  const open = hedges.filter(h=>h.status==="Open");
+  let long=0, short=0, unpriced=0, mtmTot=0;
+  open.forEach(h=>{ const t=num(h.tonnes); if(h.side==="Buy") long+=t; else short+=t; unpriced+=num(h.unpriced); mtmTot+=mtm(h,price); });
+  const net = long - short;
+  const cards = [
+    {k:"Net position", v:fmtT(Math.abs(net))+" t", cls: net>0?"long":net<0?"short":"", x: net>0?"net long":net<0?"net short":"flat"},
+    {k:"Total long", v:fmtT(long)+" t", cls:"long", x:"bought / long legs"},
+    {k:"Total short", v:fmtT(short)+" t", cls:"short", x:"sold / short legs"},
+    {k:"Unpriced exposure", v:fmtT(unpriced)+" t", cls:"warn", x:"floating, not yet fixed"},
+    {k:"Indicative MTM", v: price? fmtUSD(mtmTot) : "—", cls: mtmTot>0?"pos":mtmTot<0?"neg":"", x: price? "vs "+fmtN(price)+" /t" : "enter a price"},
+  ];
+  document.getElementById("cards").innerHTML = cards.map(c=>`<div class="card"><div class="k">${c.k}</div><div class="v ${c.cls}">${c.v}</div><div class="x">${c.x}</div></div>`).join("");
+}
+function renderMonths(price){
+  const open = hedges.filter(h=>h.status==="Open");
+  const groups = {};
+  open.forEach(h=>{
+    const key = monthKey(h.prompt);
+    (groups[key] = groups[key] || {key, label:monthLabel(h.prompt), long:0, short:0, priced:0, unpriced:0, mtm:0});
+    const g = groups[key], t = num(h.tonnes);
+    if(h.side==="Buy") g.long+=t; else g.short+=t;
+    g.priced+=priced(h); g.unpriced+=num(h.unpriced); g.mtm+=mtm(h,price);
+  });
+  const rows = Object.values(groups).sort((a,b)=>a.key<b.key?-1:1);
+  const body = document.getElementById("monthBody");
+  if(!rows.length){ body.innerHTML = `<tr><td colspan="7" class="empty">No open positions yet.</td></tr>`; return; }
+  let tL=0,tS=0,tP=0,tU=0,tM=0;
+  body.innerHTML = rows.map(g=>{
+    const net=g.long-g.short; tL+=g.long;tS+=g.short;tP+=g.priced;tU+=g.unpriced;tM+=g.mtm;
+    return `<tr><td><b>${g.label}</b></td>
+      <td class="num long">${fmtT(g.long)}</td><td class="num short">${fmtT(g.short)}</td>
+      <td class="num"><b class="${net>0?'pl-pos':net<0?'pl-neg':''}">${net>0?'+':''}${fmtT(net)}</b></td>
+      <td class="num muted">${fmtT(g.priced)}</td>
+      <td class="num" style="color:var(--warn)">${fmtT(g.unpriced)}</td>
+      <td class="num">${price?`<span class="${g.mtm>0?'pl-pos':g.mtm<0?'pl-neg':''}">${fmtUSD(g.mtm)}</span>`:'—'}</td></tr>`;
+  }).join("") + `<tr style="border-top:2px solid var(--line)"><td><b>Total</b></td>
+      <td class="num long"><b>${fmtT(tL)}</b></td><td class="num short"><b>${fmtT(tS)}</b></td>
+      <td class="num"><b>${(tL-tS)>0?'+':''}${fmtT(tL-tS)}</b></td>
+      <td class="num muted"><b>${fmtT(tP)}</b></td><td class="num" style="color:var(--warn)"><b>${fmtT(tU)}</b></td>
+      <td class="num">${price?`<b class="${tM>0?'pl-pos':tM<0?'pl-neg':''}">${fmtUSD(tM)}</b>`:'—'}</td></tr>`;
+}
+const COLS = [
+  {k:"tradeDate", t:"Trade date", fmt:h=>fmtDate(h.tradeDate)},
+  {k:"tradeId", t:"Trade ID", fmt:h=>`<b>${h.tradeId||"—"}</b>`},
+  {k:"venue", t:"Venue", fmt:h=>`<span class="tag venue">${h.venue||""}</span>`},
+  {k:"side", t:"Side", fmt:h=>`<span class="tag ${h.side==='Buy'?'buy':'sell'}">${h.side==='Buy'?'BUY':'SELL'}</span>`},
+  {k:"product", t:"Product", fmt:h=>h.product||"—"},
+  {k:"tonnes", t:"Tonnes", num:true, fmt:h=>fmtT(num(h.tonnes))},
+  {k:"price", t:"Price / basis", fmt:h=>priceBasis(h)},
+  {k:"unpriced", t:"Unpriced", num:true, fmt:h=>num(h.unpriced)?`<span style="color:var(--warn)">${fmtT(num(h.unpriced))}</span>`:`<span class="muted">0</span>`},
+  {k:"prompt", t:"Prompt", fmt:h=>fmtDate(h.prompt)},
+  {k:"mtm", t:"Indic. MTM", num:true, fmt:h=>{const m=mtm(h,currentPrice());return currentPrice()&&num(h.strike)?`<span class="${m>0?'pl-pos':m<0?'pl-neg':''}">${fmtUSD(m)}</span>`:`<span class="muted">—</span>`}},
+  {k:"status", t:"Status", fmt:h=>`<span class="tag ${h.status==='Open'?'open':'closed'}">${h.status||'Open'}</span>`},
+];
+function priceBasis(h){
+  if(h.pricing==="Fixed") return num(h.strike)? fmtN(num(h.strike)) : "Fixed";
+  const d = h.diff; if(d===""||d===null||d===undefined) return "ASP";
+  const n = num(d); return "ASP" + (n>=0? "+"+fmtN(n,n%1?2:0) : fmtN(n,n%1?2:0));
+}
+function sortVal(h,k){
+  if(k==="tradeDate"||k==="prompt"){ const d=parseDate(h[k]); return d?d.getTime():0; }
+  if(k==="tonnes"||k==="unpriced") return num(h[k]);
+  if(k==="mtm") return mtm(h,currentPrice());
+  if(k==="price") return num(h.strike)||num(h.diff)||0;
+  return (""+(h[k]||"")).toLowerCase();
+}
+function renderLedger(price){
+  document.getElementById("ledgerHead").innerHTML = COLS.map(c=>{
+    const arrow = sortKey===c.k ? (sortDir>0?"▲":"▼") : "";
+    return `<th class="sortable ${c.num?'num':''}" onclick="setSort('${c.k}')">${c.t} <span class="arrow">${arrow}</span></th>`;
+  }).join("") + `<th class="no-print"></th>`;
+  const rows = filtered().sort((a,b)=>{ const x=sortVal(a,sortKey), y=sortVal(b,sortKey); return (x<y?-1:x>y?1:0)*sortDir; });
+  const body = document.getElementById("ledgerBody");
+  if(!rows.length){ body.innerHTML = `<tr><td colspan="${COLS.length+1}" class="empty">No hedges yet. Click <b>+ Add hedge</b>, <b>Import</b>, or <b>Sample data</b> to explore.</td></tr>`; }
+  else body.innerHTML = rows.map(h=>`<tr ondblclick="openEditor('${h.id}')">
+      ${COLS.map(c=>`<td class="${c.num?'num':''}">${c.fmt(h)}</td>`).join("")}
+      <td class="no-print"><div class="row-actions"><button onclick="openEditor('${h.id}')">Edit</button></div></td></tr>`).join("");
+  document.getElementById("ledgerCount").textContent = rows.length + " of " + hedges.length + " hedges";
+}
+function setSort(k){ if(sortKey===k) sortDir=-sortDir; else {sortKey=k;sortDir=1;} render(); }
+
+/* ============================================================
+   EDITOR
+   ============================================================ */
+function openEditor(id){
+  editingId = id || null;
+  const h = id ? hedges.find(x=>x.id===id) : null;
+  document.getElementById("editorTitle").textContent = h ? "Edit hedge" : "Add hedge";
+  document.getElementById("deleteBtn").style.visibility = h ? "visible" : "hidden";
+  const g = (k,d="")=> h ? (h[k]??d) : d;
+  document.getElementById("f_tradeDate").value = h?toISO(h.tradeDate):new Date().toISOString().slice(0,10);
+  document.getElementById("f_tradeId").value = g("tradeId");
+  document.getElementById("f_venue").value = g("venue","LME");
+  document.getElementById("f_side").value = g("side","Buy");
+  document.getElementById("f_product").value = g("product");
+  document.getElementById("f_tonnes").value = g("tonnes");
+  document.getElementById("f_pricing").value = g("pricing","Average");
+  document.getElementById("f_diff").value = g("diff");
+  document.getElementById("f_strike").value = g("strike");
+  document.getElementById("f_status").value = g("status","Open");
+  document.getElementById("f_avgStart").value = h?toISO(h.avgStart):"";
+  document.getElementById("f_avgEnd").value = h?toISO(h.avgEnd):"";
+  document.getElementById("f_prompt").value = h?toISO(h.prompt):"";
+  document.getElementById("f_unpriced").value = g("unpriced",0);
+  document.getElementById("f_notes").value = g("notes");
+  syncPricingFields();
+  document.getElementById("editorOverlay").classList.add("show");
+}
+function closeEditor(){ document.getElementById("editorOverlay").classList.remove("show"); editingId=null; }
+function syncPricingFields(){ document.getElementById("strikeField").style.opacity = document.getElementById("f_pricing").value==="Fixed"?1:.5; }
+async function saveEditor(){
+  const rec = {
+    tradeDate: document.getElementById("f_tradeDate").value,
+    tradeId: document.getElementById("f_tradeId").value.trim(),
+    venue: document.getElementById("f_venue").value,
+    side: document.getElementById("f_side").value,
+    product: document.getElementById("f_product").value.trim(),
+    tonnes: num(document.getElementById("f_tonnes").value),
+    pricing: document.getElementById("f_pricing").value,
+    diff: document.getElementById("f_diff").value===""?"":num(document.getElementById("f_diff").value),
+    strike: document.getElementById("f_strike").value===""?"":num(document.getElementById("f_strike").value),
+    status: document.getElementById("f_status").value,
+    avgStart: document.getElementById("f_avgStart").value,
+    avgEnd: document.getElementById("f_avgEnd").value,
+    prompt: document.getElementById("f_prompt").value,
+    unpriced: num(document.getElementById("f_unpriced").value),
+    notes: document.getElementById("f_notes").value.trim(),
+  };
+  if(!rec.tonnes){ toast("Enter a quantity in tonnes."); return; }
+  const btn = document.getElementById("saveBtn"); btn.disabled = true;
+  try{
+    if(editingId) await persistUpdate(editingId, rec); else await persistAdd(rec);
+    render(); closeEditor(); toast(editingId?"Hedge updated":"Hedge added");
+  }catch(e){ toast("Save failed: "+(e.message||e)); }
+  finally{ btn.disabled = false; }
+}
+async function deleteCurrent(){
+  if(!editingId) return;
+  if(!confirm("Delete this hedge? This cannot be undone.")) return;
+  try{ await persistRemove(editingId); render(); closeEditor(); toast("Hedge deleted"); }
+  catch(e){ toast("Delete failed: "+(e.message||e)); }
+}
+
+/* ============================================================
+   IMPORT / EXPORT / SAMPLE
+   ============================================================ */
+function openImport(){ document.getElementById("importText").value=""; document.getElementById("importOverlay").classList.add("show"); }
+function closeImport(){ document.getElementById("importOverlay").classList.remove("show"); }
+function parseCSV(text){
+  const lines = text.trim().split(/\r?\n/).filter(l=>l.trim()); if(!lines.length) return [];
+  const split = l => { const out=[]; let cur="",q=false;
+    for(const ch of l){ if(ch==='"'){q=!q;} else if(ch===','&&!q){out.push(cur);cur="";} else cur+=ch; } out.push(cur); return out.map(s=>s.trim()); };
+  const header = split(lines[0]).map(h=>h.toLowerCase().replace(/[^a-z]/g,"")); const idx = name => header.indexOf(name);
+  const recs=[];
+  for(let i=1;i<lines.length;i++){
+    const c = split(lines[i]); const get=n=>{const k=idx(n);return k>=0?c[k]:"";}; if(!c.join("")) continue;
+    recs.push({
+      tradeDate:toISO(get("tradedate"))||get("tradedate"), tradeId:get("tradeid"),
+      venue:(get("venue")||"LME").toUpperCase().includes("OTC")?"OTC":"LME",
+      side:/sell|short/i.test(get("side"))?"Sell":"Buy", product:get("product"),
+      tonnes:num(get("tonnes")||get("quantity")||get("lots")),
+      pricing:/fix/i.test(get("pricing"))?"Fixed":"Average",
+      diff:get("diff")===""?"":num(get("diff")), strike:get("strike")===""?"":num(get("strike")),
+      avgStart:toISO(get("avgstart")), avgEnd:toISO(get("avgend")), prompt:toISO(get("prompt"))||get("prompt"),
+      unpriced:num(get("unpriced")), status:/clos/i.test(get("status"))?"Closed":"Open", notes:get("notes"),
+    });
+  }
+  return recs;
+}
+async function runImport(){
+  const text = document.getElementById("importText").value.trim();
+  if(!text){ toast("Nothing to import."); return; }
+  let recs=[];
+  try{
+    if(text[0]==="["||text[0]==="{"){ const j=JSON.parse(text); recs=(Array.isArray(j)?j:[j]).map(stripId); }
+    else recs = parseCSV(text);
+  }catch(e){ toast("Could not parse: "+e.message); return; }
+  if(!recs.length){ toast("No rows found."); return; }
+  try{
+    if(document.getElementById("importReplace").checked){
+      if(!confirm("Replace ALL current hedges with the imported rows?")) return;
+      await clearAllInternal();
+    }
+    await persistMany(recs); render(); closeImport(); toast("Imported "+recs.length+" hedge(s)");
+  }catch(e){ toast("Import failed: "+(e.message||e)); }
+}
+function download(name, text, type){
+  const b = new Blob([text],{type}); const u = URL.createObjectURL(b);
+  const a = document.createElement("a"); a.href=u; a.download=name; a.click(); URL.revokeObjectURL(u);
+}
+function exportJSON(){ download("hedge-backup-"+new Date().toISOString().slice(0,10)+".json", JSON.stringify(hedges.map(stripId),null,2), "application/json"); toast("Backup downloaded"); }
+function exportCSV(){
+  const cols=["tradeDate","tradeId","venue","side","product","tonnes","pricing","diff","strike","avgStart","avgEnd","prompt","unpriced","status","notes"];
+  const esc=v=>{v=v??"";return /[",\n]/.test(v)?'"'+(""+v).replace(/"/g,'""')+'"':v;};
+  const csv=[cols.join(",")].concat(hedges.map(h=>cols.map(c=>esc(h[c])).join(","))).join("\n");
+  download("hedge-ledger-"+new Date().toISOString().slice(0,10)+".csv", csv, "text/csv"); toast("CSV downloaded");
+}
+async function clearAllInternal(){
+  if(mode==="cloud"){ const { error } = await sb.from("hedges").delete().neq("id","00000000-0000-0000-0000-000000000000"); if(error) throw error; hedges=[]; }
+  else { hedges=[]; saveLocal(); }
+}
+function genericSample(){
+  return [
+    {tradeDate:"2026-01-05", tradeId:"SAMPLE-01", venue:"LME", side:"Buy",  product:"Avg Primary Aluminium", tonnes:100, pricing:"Average", diff:7, strike:"", avgStart:"", avgEnd:"", prompt:"2026-04-15", unpriced:60, status:"Open", notes:"Example only — edit or delete"},
+    {tradeDate:"2026-01-12", tradeId:"SAMPLE-02", venue:"LME", side:"Sell", product:"Avg Primary Aluminium", tonnes:50,  pricing:"Average", diff:"", strike:"", avgStart:"", avgEnd:"", prompt:"2026-05-20", unpriced:50, status:"Open", notes:"Example only"},
+    {tradeDate:"2026-02-02", tradeId:"SAMPLE-03", venue:"OTC", side:"Buy",  product:"OTCM Primary Aluminium", tonnes:25, pricing:"Fixed", diff:"", strike:2700, avgStart:"", avgEnd:"", prompt:"2026-06-17", unpriced:0, status:"Open", notes:"Example fixed-price leg"},
+  ];
+}
+async function loadSample(){
+  if(hedges.length && !confirm("Add 3 example rows to the current book?")) return;
+  try{ await persistMany(genericSample()); render(); toast("Sample rows added"); }
+  catch(e){ toast("Failed: "+(e.message||e)); }
+}
+
+/* ============================================================
+   SETUP / CONNECT
+   ============================================================ */
+function openSetup(){
+  const cfg = sbConfig();
+  document.getElementById("sb_url").value = localStorage.getItem("sb_url") || (SUPABASE_URL||"");
+  document.getElementById("sb_key").value = localStorage.getItem("sb_key") || (SUPABASE_ANON_KEY||"");
+  document.getElementById("disconnectBtn").style.display = (cfg.url&&cfg.key)?"":"none";
+  document.getElementById("setupOverlay").classList.add("show");
+}
+function closeSetup(){ document.getElementById("setupOverlay").classList.remove("show"); }
+function saveSetup(){
+  const url = document.getElementById("sb_url").value.trim();
+  const key = document.getElementById("sb_key").value.trim();
+  if(!url || !key){ toast("Enter both the URL and the anon key."); return; }
+  localStorage.setItem("sb_url", url); localStorage.setItem("sb_key", key);
+  toast("Connected — reloading…"); setTimeout(()=>location.reload(), 600);
+}
+function disconnectDb(){
+  if(!confirm("Disconnect this browser from the shared book and go back to local mode?")) return;
+  localStorage.removeItem("sb_url"); localStorage.removeItem("sb_key");
+  setTimeout(()=>location.reload(), 300);
+}
+
+/* ============================================================
+   MISC
+   ============================================================ */
+let toastTimer;
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),2400); }
+document.getElementById("mktPrice").addEventListener("input", e=>{ localStorage.setItem(LKEY+"_price", e.target.value); render(); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ closeEditor(); closeImport(); closeSetup(); } });
+document.querySelectorAll(".overlay").forEach(o=>o.addEventListener("click",e=>{ if(e.target===o) o.classList.remove("show"); }));
+
+init();
+</script>
+</body>
+</html>
