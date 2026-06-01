@@ -90,6 +90,13 @@
   .pl-neg{color:var(--short);font-weight:600}
   .muted{color:var(--muted)}
   .empty{padding:40px;text-align:center;color:var(--muted)}
+  .month-row{cursor:pointer}
+  .month-row:hover{background:#f1f6fa}
+  .caret{display:inline-block;width:12px;color:var(--muted);font-size:10px}
+  table.sub{width:100%;border-collapse:collapse}
+  table.sub td{border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap;padding:6px 12px}
+  table.sub tr:last-child td{border-bottom:none}
+  table.sub tr:hover{background:#eef4f9;cursor:pointer}
 
   /* Modal */
   .overlay{position:fixed;inset:0;background:rgba(20,30,40,.45);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow:auto}
@@ -177,7 +184,7 @@
     <table>
       <thead><tr>
         <th>Prompt month</th><th class="num">Long (t)</th><th class="num">Short (t)</th>
-        <th class="num">Net (t)</th><th class="num">Priced (t)</th><th class="num">Unpriced (t)</th><th class="num">Indic. MTM</th>
+        <th class="num">Net (t)</th><th class="num">Priced (t)</th><th class="num">Unpriced (t)</th><th class="num" title="Mark-to-market: indicative value if closed at the price you entered">Indic. MTM</th>
       </tr></thead>
       <tbody id="monthBody"></tbody>
     </table>
@@ -485,33 +492,53 @@ function renderCards(price){
   ];
   document.getElementById("cards").innerHTML = cards.map(c=>`<div class="card"><div class="k">${c.k}</div><div class="v ${c.cls}">${c.v}</div><div class="x">${c.x}</div></div>`).join("");
 }
+let expandedMonths = new Set();
+function toggleMonth(key){ if(expandedMonths.has(key)) expandedMonths.delete(key); else expandedMonths.add(key); render(); }
 function renderMonths(price){
   const open = hedges.filter(h=>h.status==="Open");
   const groups = {};
   open.forEach(h=>{
     const key = monthKey(h.prompt);
-    (groups[key] = groups[key] || {key, label:monthLabel(h.prompt), long:0, short:0, priced:0, unpriced:0, mtm:0});
+    (groups[key] = groups[key] || {key, label:monthLabel(h.prompt), long:0, short:0, priced:0, unpriced:0, mtm:0, items:[]});
     const g = groups[key], t = num(h.tonnes);
     if(h.side==="Buy") g.long+=t; else g.short+=t;
-    g.priced+=priced(h); g.unpriced+=num(h.unpriced); g.mtm+=mtm(h,price);
+    g.priced+=priced(h); g.unpriced+=num(h.unpriced); g.mtm+=mtm(h,price); g.items.push(h);
   });
   const rows = Object.values(groups).sort((a,b)=>a.key<b.key?-1:1);
   const body = document.getElementById("monthBody");
   if(!rows.length){ body.innerHTML = `<tr><td colspan="7" class="empty">No open positions yet.</td></tr>`; return; }
-  let tL=0,tS=0,tP=0,tU=0,tM=0;
-  body.innerHTML = rows.map(g=>{
+  let tL=0,tS=0,tP=0,tU=0,tM=0, html="";
+  rows.forEach(g=>{
     const net=g.long-g.short; tL+=g.long;tS+=g.short;tP+=g.priced;tU+=g.unpriced;tM+=g.mtm;
-    return `<tr><td><b>${g.label}</b></td>
+    const exp = expandedMonths.has(g.key);
+    html += `<tr class="month-row" onclick="toggleMonth('${g.key}')">
+      <td><span class="caret">${exp?'▾':'▸'}</span> <b>${g.label}</b> <span class="muted" style="font-weight:400">· ${g.items.length} trade${g.items.length>1?'s':''}</span></td>
       <td class="num long">${fmtT(g.long)}</td><td class="num short">${fmtT(g.short)}</td>
       <td class="num"><b class="${net>0?'pl-pos':net<0?'pl-neg':''}">${net>0?'+':''}${fmtT(net)}</b></td>
       <td class="num muted">${fmtT(g.priced)}</td>
       <td class="num" style="color:var(--warn)">${fmtT(g.unpriced)}</td>
       <td class="num">${price?`<span class="${g.mtm>0?'pl-pos':g.mtm<0?'pl-neg':''}">${fmtUSD(g.mtm)}</span>`:'—'}</td></tr>`;
-  }).join("") + `<tr style="border-top:2px solid var(--line)"><td><b>Total</b></td>
+    if(exp){
+      const items = g.items.slice().sort((a,b)=> a.side===b.side ? 0 : (a.side==="Buy"?-1:1));
+      html += `<tr class="month-detail"><td colspan="7" style="padding:0;background:#fafcfd"><table class="sub"><tbody>` +
+        items.map(h=>{ const m=mtm(h,price); return `<tr ondblclick="openEditor('${h.id}')">
+          <td style="padding-left:30px"><b>${h.tradeId||'—'}</b> <span class="tag venue">${h.venue||''}</span></td>
+          <td><span class="tag ${h.side==='Buy'?'buy':'sell'}">${h.side==='Buy'?'BUY':'SELL'}</span></td>
+          <td>${h.product||''}</td>
+          <td class="num">${fmtT(num(h.tonnes))} t</td>
+          <td class="num">${priceBasis(h)}</td>
+          <td class="num">${num(h.unpriced)?`<span style="color:var(--warn)">${fmtT(num(h.unpriced))} t unpriced</span>`:`<span class="muted">fully priced</span>`}</td>
+          <td class="num">${price&&num(h.strike)?`<span class="${m>0?'pl-pos':m<0?'pl-neg':''}">${fmtUSD(m)}</span>`:`<span class="muted">—</span>`}</td>
+        </tr>`; }).join("") +
+        `</tbody></table></td></tr>`;
+    }
+  });
+  html += `<tr style="border-top:2px solid var(--line)"><td><b>Total</b></td>
       <td class="num long"><b>${fmtT(tL)}</b></td><td class="num short"><b>${fmtT(tS)}</b></td>
       <td class="num"><b>${(tL-tS)>0?'+':''}${fmtT(tL-tS)}</b></td>
       <td class="num muted"><b>${fmtT(tP)}</b></td><td class="num" style="color:var(--warn)"><b>${fmtT(tU)}</b></td>
       <td class="num">${price?`<b class="${tM>0?'pl-pos':tM<0?'pl-neg':''}">${fmtUSD(tM)}</b>`:'—'}</td></tr>`;
+  body.innerHTML = html;
 }
 const COLS = [
   {k:"tradeDate", t:"Trade date", fmt:h=>fmtDate(h.tradeDate)},
