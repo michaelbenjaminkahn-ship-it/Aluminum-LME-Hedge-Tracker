@@ -25,6 +25,14 @@ const FIELDS = ['id','tradeDate','side','lots','price','customer','po','prompt',
 function doGet(e)  { return route_(parseGet_(e)); }
 function doPost(e) { var p = {}; try { p = JSON.parse(e.postData.contents); } catch (err) {} return route_(p); }
 
+function parseGet_(e) {
+  var p = {};
+  if (e && e.parameter) for (var k in e.parameter) p[k] = e.parameter[k];
+  if (typeof p.row  === 'string') { try { p.row  = JSON.parse(p.row);  } catch (_) {} }
+  if (typeof p.rows === 'string') { try { p.rows = JSON.parse(p.rows); } catch (_) {} }
+  return p;
+}
+
 function route_(p) {
   if (String(p.token || '') !== PASSCODE) return out_({ error: 'bad passcode' });
   var action = p.action || 'list';
