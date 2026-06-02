@@ -10,7 +10,8 @@
  *        Execute as: Me.   Who has access: Anyone.
  *   5. Copy the Web app URL (ends in /exec) and give it + the passcode to the app.
  *
- * The app sends the passcode with every request; without it, nothing is returned.
+ * The app only ever writes its own columns (id … updatedAt). Any extra columns
+ * you add to the Sheet (e.g. a P&L formula) are left untouched.
  */
 
 const SHEET_NAME = 'Hedges';
@@ -45,26 +46,26 @@ function route_(p) {
   var lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
-    var sh = getSheet_(), map = headerMap_(sh), width = sh.getLastColumn();
+    var sh = getSheet_(), map = headerMap_(sh);
     var now = new Date().toISOString();
 
     if (action === 'add') {
       var id = Utilities.getUuid();
-      writeRow_(sh, map, width, merge_(p.row, { id: id, updatedAt: now }), sh.getLastRow() + 1);
+      writeRow_(sh, map, lastIdRow_(sh, map) + 1, merge_(p.row, { id: id, updatedAt: now }));
       return out_({ ok: true, id: id });
     }
     if (action === 'addMany') {
       var ids = [];
       (p.rows || []).forEach(function (row) {
         var nid = Utilities.getUuid(); ids.push(nid);
-        writeRow_(sh, map, sh.getLastColumn(), merge_(row, { id: nid, updatedAt: now }), sh.getLastRow() + 1);
+        writeRow_(sh, map, lastIdRow_(sh, map) + 1, merge_(row, { id: nid, updatedAt: now }));
       });
       return out_({ ok: true, ids: ids });
     }
     if (action === 'update') {
       var r = rowFor_(sh, map, p.id);
       if (r < 0) return out_({ error: 'not found' });
-      writeRow_(sh, map, width, merge_(p.row, { id: p.id, updatedAt: now }), r);
+      writeRow_(sh, map, r, merge_(p.row, { id: p.id, updatedAt: now }));
       return out_({ ok: true });
     }
     if (action === 'delete') {
@@ -74,7 +75,13 @@ function route_(p) {
       return out_({ ok: true });
     }
     if (action === 'clear') {
-      if (sh.getLastRow() > 1) sh.deleteRows(2, sh.getLastRow() - 1);
+      var lastId = lastIdRow_(sh, map);
+      if (lastId > 1) {
+        // blank only the app's columns, row by row — leaves your formula columns intact
+        for (var row = 2; row <= lastId; row++) {
+          FIELDS.forEach(function (f) { sh.getRange(row, map[f] + 1).clearContent(); });
+        }
+      }
       return out_({ ok: true });
     }
     return out_({ error: 'unknown action' });
@@ -108,8 +115,19 @@ function headerMap_(sh) {
   });
   return map;
 }
+// Last row that actually holds a trade (by the id column) — ignores rows that
+// only contain spilled formula output in your own columns.
+function lastIdRow_(sh, map) {
+  var n = sh.getLastRow();
+  if (n < 2) return 1;
+  var ids = sh.getRange(2, map['id'] + 1, n - 1, 1).getValues();
+  for (var i = ids.length - 1; i >= 0; i--) {
+    if (ids[i][0] !== '' && ids[i][0] !== null) return i + 2;
+  }
+  return 1;
+}
 function readAll_(sh, map) {
-  var last = sh.getLastRow();
+  var last = lastIdRow_(sh, map);
   if (last < 2) return [];
   var vals = sh.getRange(2, 1, last - 1, sh.getLastColumn()).getValues();
   var out = [];
@@ -133,12 +151,11 @@ function rowFor_(sh, map, id) {
   for (var i = 0; i < ids.length; i++) if (String(ids[i][0]) === String(id)) return i + 2;
   return -1;
 }
-function writeRow_(sh, map, width, obj, rowNum) {
-  var existing = (rowNum <= sh.getLastRow())
-    ? sh.getRange(rowNum, 1, 1, width).getValues()[0]
-    : new Array(width).fill('');
-  FIELDS.forEach(function (f) { if (obj[f] !== undefined) existing[map[f]] = obj[f]; });
-  sh.getRange(rowNum, 1, 1, existing.length).setValues([existing]);
+// Writes ONLY the app's own columns for this row — never your extra columns.
+function writeRow_(sh, map, rowNum, obj) {
+  FIELDS.forEach(function (f) {
+    if (obj[f] !== undefined) sh.getRange(rowNum, map[f] + 1).setValue(obj[f]);
+  });
 }
 function merge_(a, b) {
   var o = {}, k;
