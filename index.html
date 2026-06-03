@@ -235,7 +235,7 @@
       <div class="field"><label>Price (USD / tonne)</label><input id="f_price" type="number" step="0.01" placeholder="2700.00" oninput="updatePnlPreview()" /></div>
       <div class="field"><label>Customer name</label><input id="f_customer" type="text" placeholder="Customer Inc." /></div>
       <div class="field"><label>Customer PO #</label><input id="f_po" type="text" placeholder="PO-12345" /></div>
-      <div class="field"><label>Prompt date</label><input id="f_prompt" type="date" /></div>
+      <div class="field"><label>Prompt month</label><input id="f_prompt" type="date" /></div>
       <div class="field"><label>Customer delivery month</label><input id="f_deliveryMonth" type="month" /></div>
 
       <div class="field settle-box">
@@ -577,7 +577,7 @@ function renderMonths(price){
 }
 const COLS = [
   {k:"tradeDate", t:"Trade date", fmt:h=>fmtDate(h.tradeDate)},
-  {k:"side", t:"Side", fmt:h=>`<span class="tag ${h.side==='Buy'?'buy':'sell'}">${h.side==='Buy'?'BUY':'SELL'}</span>`},
+  {k:"side", t:"Buy or Sell", fmt:h=>`<span class="tag ${h.side==='Buy'?'buy':'sell'}">${h.side==='Buy'?'BUY':'SELL'}</span>`},
   {k:"customer", t:"Customer", fmt:h=>h.customer||"—"},
   {k:"po", t:"PO #", fmt:h=>h.po||"—"},
   {k:"lots", t:"Lots", num:true, fmt:h=>fmtT(qty(h))},
@@ -587,7 +587,7 @@ const COLS = [
       if(isSettled(h)){ const p=realized(h); return `<span class="${p>0?'pl-pos':p<0?'pl-neg':''}">${fmtUSD(p)}</span>`; }
       const m=openMTM(h,currentPrice()); return (currentPrice()&&num(h.price))?`<span class="muted" title="open — mark vs current price">${fmtUSD(m)}</span>`:'<span class="muted">—</span>'; }},
   {k:"deliveryMonth", t:"Delivery", fmt:h=>ymLabel(h.deliveryMonth)},
-  {k:"prompt", t:"Prompt", fmt:h=>fmtDate(h.prompt)},
+  {k:"prompt", t:"Prompt Month", fmt:h=>fmtDate(h.prompt)},
   {k:"status", t:"Status", fmt:h=>{ const s=isSettled(h)?"Settled":"Open"; return `<span class="tag ${s==='Open'?'open':'closed'}">${s}</span>`; }},
 ];
 function sortVal(h,k){

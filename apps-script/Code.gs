@@ -35,6 +35,7 @@ function parseGet_(e) {
 }
 
 function route_(p) {
+  if (p.action === 'ping') return out_({ ok: true, version: 3 });   // version check (no passcode needed)
   if (String(p.token || '') !== PASSCODE) return out_({ error: 'bad passcode' });
   var action = p.action || 'list';
 
